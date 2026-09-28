@@ -11,19 +11,15 @@
             margin: 0;
             padding: 20px;
         }
-        
-        /* Wadah Utama Dua Kolom Split */
         .split-container {
             display: flex;
-            max-width: 1000px; /* Diperlebar agar muat 2 kolom */
+            max-width: 1000px;
             background: #ffffff;
             margin: 40px auto;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-
-        /* Kolom Kiri: Galeri Foto Produk */
         .photo-column {
             flex: 1;
             background-color: #fdfdfd;
@@ -41,7 +37,6 @@
             object-fit: cover;
             border-radius: 8px;
             margin-bottom: 15px;
-            transition: opacity 0.5s ease-in-out; /* Efek transisi halus saat ganti foto */
         }
         .thumbnail-row {
             display: flex;
@@ -55,18 +50,14 @@
             border-radius: 6px;
             cursor: pointer;
             border: 2px solid transparent;
-            transition: border-color 0.3s;
         }
         .thumb-img.active {
-            border-color: #ff9800; /* Garis oranye untuk foto yang sedang aktif */
+            border-color: #ff9800;
         }
-
-        /* Kolom Kanan: Form Order / Sukses */
         .form-column {
             flex: 1;
             padding: 30px;
         }
-        
         h2 {
             color: #333;
             margin-top: 0;
@@ -108,8 +99,6 @@
         .btn-submit:hover:not(:disabled) {
             background-color: #e68a00;
         }
-        
-        /* Tampilan Sukses */
         .success-box {
             display: none;
             text-align: center;
@@ -163,7 +152,6 @@
             color: #ff9800;
             font-size: 20px;
         }
-        
         .btn-wa-confirm {
             display: block;
             width: 100%;
@@ -192,8 +180,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
-        /* RESPONSIVITAS HP: Mengubah 2 kolom berjejer menjadi bertumpuk atas-bawah */
         @media (max-width: 768px) {
             .split-container {
                 flex-direction: column;
@@ -217,16 +203,16 @@
 
 <div class="split-container">
     
-    <!-- KOLOM KIRI: SLIDESHOW FOTO PRODUK -->
+    <!-- KOLOM KIRI: SLIDESHOW PRODUK -->
     <div class="photo-column">
-        <!-- Foto Utama Berukuran Besar -->
+        <!-- PENTING: Gambar awal wajib diarahkan ke file gambar pertama Anda -->
         <img id="fotoUtama" src="dimsum1.jpg" alt="Foto Produk Utama" class="main-img">
         
-        <!-- Foto Thumbnail Kecil (Bisa Diklik Manual Juga) -->
         <div class="thumbnail-row">
+            <!-- Menampilkan 2 gambar sesuai foto yang berhasil diunggah di web Anda -->
             <img src="dimsum1.jpg" onclick="gantiFotoManual(0)" class="thumb-img active">
             <img src="dimsum2.png" onclick="gantiFotoManual(1)" class="thumb-img">
-                    </div>
+        </div>
     </div>
 
     <!-- KOLOM KANAN: FORM ORDER / RINGKASAN SUKSES -->
@@ -235,15 +221,16 @@
         <!-- BLOK FORM UTAMA -->
         <div id="formSection">
             <h2>Form Pemesanan Produk</h2>
-            <form id="orderForm">
+            <!-- Perbaikan Utama: Mengubah button tipe menjadi button biasa untuk menghindari auto-reload -->
+            <form id="orderForm" onsubmit="return false;">
                 <div class="form-group">
                     <label for="nama">Nama Lengkap:</label>
-                    <input type="text" id="nama" name="nama" required placeholder="Masukkan nama Anda">
+                    <input type="text" id="nama" required placeholder="Masukkan nama Anda">
                 </div>
 
                 <div class="form-group">
                     <label for="produk">Pilih Produk:</label>
-                    <select id="produk" name="produk" required>
+                    <select id="produk" required>
                         <option value="">-- Pilih Produk --</option>
                         <option value="50000">Baju Kaos Polos - Rp 50.000</option>
                         <option value="150000">Jaket Hoodie - Rp 150.000</option>
@@ -253,12 +240,12 @@
 
                 <div class="form-group">
                     <label for="jumlah">Jumlah Order:</label>
-                    <input type="number" id="jumlah" name="jumlah" min="1" value="1" required>
+                    <input type="number" id="jumlah" min="1" value="1" required>
                 </div>
 
                 <div class="form-group">
                     <label for="ongkir">Metode Pengiriman (Ongkir):</label>
-                    <select id="ongkir" name="kurir" required>
+                    <select id="ongkir" required>
                         <option value="">-- Pilih Kurir --</option>
                         <option value="9000">J&T Reguler - Rp 9.000</option>
                         <option value="11000">JNE Reguler - Rp 11.000</option>
@@ -269,10 +256,11 @@
 
                 <div class="form-group">
                     <label for="alamat">Alamat Pengiriman:</label>
-                    <textarea id="alamat" name="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
+                    <textarea id="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
                 </div>
 
-                <button type="submit" id="submitBtn" class="btn-submit">Kirim Order</button>
+                <!-- Menggunakan tipe button murni agar aman dari pemaksaan reload oleh browser -->
+                <button type="button" id="submitBtn" onclick="prosesValidasiDanKirim()" class="btn-submit">Kirim Order</button>
             </form>
         </div>
 
@@ -280,7 +268,7 @@
         <div id="successSection" class="success-box">
             <div class="success-icon">✅</div>
             <div class="success-title">Order diterima!</div>
-            <div class="success-subtitle">Terma kasih, pesanan Anda sudah tercatat otomatis di pembukuan toko.</div>
+            <div class="success-subtitle">Terima kasih, pesanan Anda sudah tercatat otomatis di pembukuan toko.</div>
             
             <div class="order-summary">
                 <div class="summary-item"><span>Nama:</span> <strong id="resNama">-</strong></div>
@@ -291,134 +279,138 @@
                 <div class="total-item"><span>Total Bayar:</span> <strong id="resTotal">Rp 0</strong></div>
             </div>
 
-            <!-- Tombol Kirim Chat ke WhatsApp -->
-Konfirmasi via WhatsApp
-            
-            
-            Buat order lagi
-            
-            // ==================== 1. LOGIKA SLIDESHOW OTOMATIS ====================
-// ⚠️ SESUAIKAN NAMA DI BAWAH INI dengan nama file asli Anda di GitHub (Perhatikan huruf besar/kecilnya!)
-const daftarFoto = ["dimsum1.jpg", "dimsum2.png"];
+            <a href="#" id="waConfirmBtn" target="_blank" class="btn-wa-confirm">Konfirmasi via WhatsApp</a>
+            <br>
+            <a class="btn-repeat" onclick="resetForm()">Buat order lagi</a>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// ==================== 1. LOGIKA SLIDESHOW PRODUK (2 FOTO) ====================
+const daftarFoto = ["dimsum1.jpg", "dimsum2.png"]; 
 let indeksAktif = 0;
 let intervalSlideshow;
 
 function jalankanSlideshowOtomatis() {
-    // Hapus interval lama agar tidak menumpuk dan macet
     clearInterval(intervalSlideshow); 
-    
     intervalSlideshow = setInterval(function() {
         indeksAktif = (indeksAktif + 1) % daftarFoto.length;
         perbaruiTampilanFoto(indeksAktif);
-    }, 3000); // Berganti setiap 3 detik
+    }, 3000); 
 }
 
 function perbaruiTampilanFoto(indeks) {
-    const elemenFotoUtama = document.getElementById("fotoUtama");
-    if (elemenFotoUtama) {
-        elemenFotoUtama.src = daftarFoto[indeks];
-    }
-    
-    // Mengatur garis penanda (border) oranye pada kotak kecil di bawahnya
+    document.getElementById("fotoUtama").src = daftarFoto[indeks];
     const thumbnails = document.getElementsByClassName("thumb-img");
-    if (thumbnails.length > 0) {
-        for (let i = 0; i < thumbnails.length; i++) {
-            if (thumbnails[i]) {
-                thumbnails[i].classList.remove("active");
-            }
-        }
-        if (thumbnails[indeks]) {
-            thumbnails[indeks].classList.add("active");
-        }
+    for (let i = 0; i < thumbnails.length; i++) {
+        thumbnails[i].classList.remove("active");
+    }
+    if(thumbnails[indeks]) {
+        thumbnails[indeks].classList.add("active");
     }
 }
 
 function gantiFotoManual(indeks) {
-    indeksAktif = (indeks >= 0 && indeks < daftarFoto.length) ? indeks : 0;
+    indeksAktif = indeks;
     perbaruiTampilanFoto(indeksAktif);
-    // Jalankan ulang detikan agar pergantian otomatisnya segar kembali
     jalankanSlideshowOtomatis();
 }
 
-// Menjalankan fitur slideshow secara aman saat halaman web terbuka
-document.addEventListener("DOMContentLoaded", function() {
-    jalankanSlideshowOtomatis();
-});
+// Otomatis jalan saat web dimuat
+jalankanSlideshowOtomatis();
 
-                
-            // ==================== 2. LOGIKA PENGIRIMAN DATA FORM ====================
-                document.getElementById('orderForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                
-            const submitBtn = document.getElementById("submitBtn");
-                submitBtn.innerText = "Memproses Order...";
-                submitBtn.disabled = true;
-            
-            const nomorWA = "6285876712482";
-                
-            const nama = document.getElementById("nama").value.trim();
-                const alamat = document.getElementById("alamat").value.trim();
-                const jumlah = parseInt(document.getElementById("jumlah").value);
-                
-            const produkSelect = document.getElementById("produk");
-                const hargaProduk = parseInt(produkSelect.value);
-                const namaProduk = produkSelect.options[produkSelect.selectedIndex].text;
-                
-            const ongkirSelect = document.getElementById("ongkir");
-                const biayaOngkir = parseInt(ongkirSelect.value);
-                const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text;
-            
-            const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
-                
-            const formatRupiah = new Intl.NumberFormat('id-ID', {
-                style: 'currency',
-                currency: 'IDR',
-                minimumFractionDigits: 0
-                }).format(totalHargaAkhir);
-                
-            // ⚠️ SILAKAN MASUKKAN KEMBALI URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbzgpw_zidBdAgnqJmFl980hKzvjjUVCeKT7EFzVKn5UDDxQtX8T6hmeF4gbzWm0pm8v/exec';
-                
-                const formData = new FormData();
-                formData.append('nama', nama);
-                formData.append('produk', namaProduk);
-                formData.append('jumlah', jumlah + " pcs");
-                formData.append('kurir', namaKurir);
-                formData.append('alamat', alamat);
-                formData.append('total', formatRupiah);
-                
-                fetch(scriptURL, { method: 'POST', body: formData}).then(response => {
-                document.getElementById("resNama").innerText = nama;
-                document.getElementById("resProduk").innerText = namaProduk;
-                document.getElementById("resJumlah").innerText = jumlah + " pcs";
-                document.getElementById("resKurir").innerText = namaKurir;
-                document.getElementById("resAlamat").innerText = alamat;
-                document.getElementById("resTotal").innerText = formatRupiah;
-                
-            const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
-                "Nama: " + nama + "\n" +
-                "Produk: " + namaProduk + "\n" +
-                "Jumlah: " + jumlah + " pcs\n" +
-                "Pengiriman: " + namaKurir + "\n" +
-                "Alamat: " + alamat + "\n\n" +
-                "TOTAL BAYAR: " + formatRupiah;
-            
-            const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
-                document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
-                
-            document.getElementById("formSection").style.display = "none";
-                document.getElementById("successSection").style.display = "block";
-                }).catch(error => {alert("Waduh, terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");
-                submitBtn.innerText = "Kirim Order";submitBtn.disabled = false;
-                console.error('Error!', error.message);
-                });
-                });
-                function resetForm() {const submitBtn = document.getElementById("submitBtn");
-                submitBtn.innerText = "Kirim Order";
-                submitBtn.disabled = false;document.getElementById("orderForm").reset();
-                document.getElementById("successSection").style.display = "none";
-                document.getElementById("formSection").style.display = "block";
-                }
+
+// ==================== 2. LOGIKA VALIDASI DAN PENGIRIMAN DATA ====================
+function prosesValidasiDanKirim() {
+    // Membaca data inputan
+    const nama = document.getElementById("nama").value.trim();
+    const alamat = document.getElementById("alamat").value.trim();
+    const jumlahInput = document.getElementById("jumlah").value;
+    const produkSelect = document.getElementById("produk");
+    const ongkirSelect = document.getElementById("ongkir");
+
+    // Validasi Manual karena tombol bertipe button biasa
+    if (nama === "" || produkSelect.value === "" || jumlahInput === "" || ongkirSelect.value === "" || alamat === "") {
+        alert("Mohon lengkapi semua data formulir pemesanan terlebih dahulu!");
+        return;
+    }
+
+    const jumlah = parseInt(jumlahInput);
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.innerText = "Memproses Order...";
+    submitBtn.disabled = true;
+
+    const nomorWA = "6285876712482"; 
+    const hargaProduk = parseInt(produkSelect.value);
+    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text; 
+    const biayaOngkir = parseInt(ongkirSelect.value);
+    const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text; 
+
+    const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
+
+    const formatRupiah = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(totalHargaAkhir);
+
+    // ⚠️ MASUKKAN KEMBALI URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzgpw_zidBdAgnqJmFl980hKzvjjUVCeKT7EFzVKn5UDDxQtX8T6hmeF4gbzWm0pm8v/exec';
+    
+    const formData = new FormData();
+    formData.append('nama', nama);
+    formData.append('produk', namaProduk);
+    formData.append('jumlah', jumlah + " pcs");
+    formData.append('kurir', namaKurir);
+    formData.append('alamat', alamat);
+    formData.append('total', formatRupiah);
+
+    // Kirim data secara senyap (Fetch API) tanpa reload halaman
+    fetch(scriptURL, { method: 'POST', body: formData})
+    .then(response => {
+        // Tampilkan rangkuman ke Halaman Sukses
+        document.getElementById("resNama").innerText = nama;
+        document.getElementById("resProduk").innerText = namaProduk;
+        document.getElementById("resJumlah").innerText = jumlah + " pcs";
+        document.getElementById("resKurir").innerText = namaKurir;
+        document.getElementById("resAlamat").innerText = alamat;
+        document.getElementById("resTotal").innerText = formatRupiah;
+
+        // Susun teks konfirmasi chat WhatsApp
+        const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
+                          "*Nama:* " + nama + "\n" +
+                          "*Produk:* " + namaProduk + "\n" +
+                          "*Jumlah:* " + jumlah + " pcs\n" +
+                          "*Pengiriman:* " + namaKurir + "\n" +
+                          "*Alamat:* " + alamat + "\n\n" +
+                          "*TOTAL BAYAR:* " + formatRupiah;
+
+        // ✔️ SUDAH DIPERBAIKI: Menggunakan alamat lengkap tautan WhatsApp resmi agar tidak error 404
+        const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+        document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
+
+        // Transisi hilangkan form, munculkan nota sukses
+        document.getElementById("formSection").style.display = "none";
+        document.getElementById("successSection").style.display = "block";
+    })
+    .catch(error => {
+        alert("Terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");
+        submitBtn.innerText = "Kirim Order";
+        submitBtn.disabled = false;
+        console.error('Error!', error.message);
+    });
+}
+
+function resetForm() {
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.innerText = "Kirim Order";
+    submitBtn.disabled = false;
+    document.getElementById("orderForm").reset();
+    document.getElementById("successSection").style.display = "none";
+    document.getElementById("formSection").style.display = "block";
+}
 
           </script>
 
