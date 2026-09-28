@@ -149,6 +149,20 @@
 <body>
 
 <div class="form-container">
+    <!-- STRUKTUR TAMPILAN FOTO (Taruh di atas Form Order) -->
+<div style="max-width: 500px; margin: 20px auto; text-align: center; background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+    
+    <!-- 1. Foto Utama yang Berukuran Besar -->
+    <img id="fotoUtama" src="dimsum1.jpg" alt="Foto Produk Utama" style="width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-bottom: 15px;">
+    
+    <!-- 2. Galeri Thumbnail (Foto-Foto Kecil di Bawahnya) -->
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <img src="mangga1.jpg" onclick="gantiFoto('dimsum1.jpg')" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid #ff9800;">
+        <img src="mangga2.jpg" onclick="gantiFoto('dimsum2.jpg')" style="width: 70px; height: 70px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 1px solid #ccc;">
+            </div>
+    
+</div>
+
     <div id="formSection">
         <h2>Form Pemesanan Produk</h2>
         <form id="orderForm">
@@ -297,6 +311,11 @@ function resetForm() {
     document.getElementById("orderForm").reset();
     document.getElementById("successSection").style.display = "none";
     document.getElementById("formSection").style.display = "block";}
+
+// Fungsi untuk mengganti foto utama saat foto kecil (thumbnail) diklik
+function gantiFoto(namaFile) {
+    document.getElementById("fotoUtama").src = namaFile;
+}
 
           </script>
 
