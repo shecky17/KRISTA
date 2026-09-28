@@ -135,18 +135,29 @@
 
             <div class="form-group">
                 <label for="produk">Pilih Produk:</label>
-                <!-- Nilai value disesuaikan dengan harga dasar angka saja untuk memudahkan rumus hitung -->
                 <select id="produk" required>
                     <option value="">-- Pilih Produk --</option>
                     <option value="50000">Baju Kaos Polos - Rp 50.000</option>
                     <option value="150000">Jaket Hoodie - Rp 150.000</option>
-                    <option value="350000">Topi Snapback - Rp 35.000</option>
+                    <option value="35000">Topi Snapback - Rp 35.000</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="jumlah">Jumlah Order:</label>
                 <input type="number" id="jumlah" min="1" value="1" required>
+            </div>
+
+            <!-- BARU: Kolom Pilihan Kurir & Ongkir -->
+            <div class="form-group">
+                <label for="ongkir">Metode Pengiriman (Ongkir):</label>
+                <select id="ongkir" required>
+                    <option value="">-- Pilih Kurir --</option>
+                    <option value="9000">J&T Reguler - Rp 9.000</option>
+                    <option value="11000">JNE Reguler - Rp 11.000</option>
+                    <option value="15000">SiCepat Best - Rp 15.000</option>
+                    <option value="0">Ambil Sendiri di Toko - Gratis</option>
+                </select>
             </div>
 
             <div class="form-group">
@@ -168,8 +179,9 @@
             <div class="summary-item"><span>Nama:</span> <strong id="resNama">-</strong></div>
             <div class="summary-item"><span>Produk:</span> <strong id="resProduk">-</strong></div>
             <div class="summary-item"><span>Jumlah:</span> <strong id="resJumlah">-</strong></div>
+            <div class="summary-item"><span>Kurir:</span> <strong id="resKurir">-</strong></div>
             <div class="summary-item"><span>Alamat:</span> <strong id="resAlamat">-</strong></div>
-            <!-- Bagian Total Harga Baru -->
+            <!-- Bagian Total Harga -->
             <div class="total-item"><span>Total Bayar:</span> <strong id="resTotal">Rp 0</strong></div>
         </div>
 
@@ -181,28 +193,36 @@
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Mengambil elemen HTML untuk dibaca teks pilihannya
+    // Mengambil data inputan pembeli
     const nama = document.getElementById("nama").value.trim();
-    const produkSelect = document.getElementById("produk");
-    const hargaProduk = parseInt(produkSelect.value); // Mengambil harga angka (misal: 50000)
-    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text.split(" - ")[0]; // Mengambil nama teksnya saja
-    const jumlah = parseInt(document.getElementById("jumlah").value);
     const alamat = document.getElementById("alamat").value.trim();
+    const jumlah = parseInt(document.getElementById("jumlah").value);
 
-    // RUMUS JAVASCRIPT: Menghitung total harga
-    const totalHarga = hargaProduk * jumlah;
+    // Memproses Produk dan Harga Produk
+    const produkSelect = document.getElementById("produk");
+    const hargaProduk = parseInt(produkSelect.value);
+    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text.split(" - ")[0];
 
-    // FUNGSI FORMAT RUPIAH: Mengubah angka 150000 menjadi string Rp 150.000
+    // BARU: Memproses Kurir dan Biaya Ongkir
+    const ongkirSelect = document.getElementById("ongkir");
+    const biayaOngkir = parseInt(ongkirSelect.value);
+    const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text.split(" - ")[0];
+
+    // BARU: Rumus Total Harga (Harga Produk x Jumlah) + Biaya Ongkir
+    const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
+
+    // Mengubah angka total menjadi format mata uang Rupiah
     const formatRupiah = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         minimumFractionDigits: 0
-    }).format(totalHarga);
+    }).format(totalHargaAkhir);
 
-    // Memasukkan data ke dalam Ringkasan Pesanan
+    // Memasukkan data ke dalam tabel ringkasan sukses
     document.getElementById("resNama").innerText = nama;
     document.getElementById("resProduk").innerText = namaProduk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
+    document.getElementById("resKurir").innerText = namaKurir; // Menampilkan kurir pilihan
     document.getElementById("resAlamat").innerText = alamat;
     document.getElementById("resTotal").innerText = formatRupiah;
 
