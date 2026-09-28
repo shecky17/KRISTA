@@ -112,7 +112,7 @@
             font-size: 20px;
         }
         
-        /* Gaya Tombol WhatsApp Baru */
+        /* Tombol Hijau WhatsApp */
         .btn-wa-confirm {
             display: block;
             width: 100%;
@@ -147,7 +147,7 @@
 <body>
 
 <div class="form-container">
-    <!-- BLOK 1: FORM UTAMA -->
+    <!-- BLOK 1: HALAMAN FORM UTAMA -->
     <div id="formSection">
         <h2>Form Pemesanan Produk</h2>
         <form id="orderForm">
@@ -191,7 +191,7 @@
         </form>
     </div>
 
-    <!-- BLOK 2: HALAMAN SUKSES -->
+    <!-- BLOK 2: HALAMAN SUKSES (ORDER DITERIMA) -->
     <div id="successSection" class="success-box">
         <div class="success-icon">✅</div>
         <div class="success-title">Order diterima!</div>
@@ -206,9 +206,10 @@
             <div class="total-item"><span>Total Bayar:</span> <strong id="resTotal">Rp 0</strong></div>
         </div>
 
-        <!-- BARU: Tombol Hubungkan / Konfirmasi via WhatsApp -->
+        <!-- Tombol Kirim Chat ke WhatsApp -->
         <a href="#" id="waConfirmBtn" target="_blank" class="btn-wa-confirm">Konfirmasi via WhatsApp</a>
 
+        <br>
         <a class="btn-repeat" onclick="resetForm()">Buat order lagi</a>
     </div>
 </div>
@@ -217,63 +218,67 @@
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // ⚠️ MASUKKAN NOMOR WHATSAPP ANDA DI SINI (Gunakan kode negara 62)
+    // Nomor WhatsApp Anda (Menggunakan nomor jualan Anda yang valid)
     const nomorWA = "6285876712482"; 
 
-    // Mengambil data inputan pembeli
+    // Mengambil nilai input
     const nama = document.getElementById("nama").value.trim();
     const alamat = document.getElementById("alamat").value.trim();
     const jumlah = parseInt(document.getElementById("jumlah").value);
 
-    // Memproses Produk dan Harga
+    // Memproses Informasi Produk
     const produkSelect = document.getElementById("produk");
     const hargaProduk = parseInt(produkSelect.value);
-    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text.split(" - ")[0];
+    const teksProdukLengkap = produkSelect.options[produkSelect.selectedIndex].text;
+    const namaProduk = teksProdukLengkap.split(" - ")[0]; // Mengambil tulisan nama produknya saja
 
-    // Memproses Kurir dan Ongkir
+    // Memproses Informasi Kurir
     const ongkirSelect = document.getElementById("ongkir");
     const biayaOngkir = parseInt(ongkirSelect.value);
-    const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text;
+    const teksKurirLengkap = ongkirSelect.options[ongkirSelect.selectedIndex].text;
+    const namaKurir = teksKurirLengkap.split(" - ")[0]; // Mengambil tulisan nama kurirnya saja
 
-    // Hitung total harga akhir
+    // Rumus Matematika Perhitungan Total Harga
     const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
 
-    // Format Mata Uang Rupiah untuk Tampilan Web
+    // Membuat Format Mata Uang Rupiah yang rapi
     const formatRupiah = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         minimumFractionDigits: 0
     }).format(totalHargaAkhir);
 
-    // Format Mata Uang Rupiah untuk Pesan Teks WhatsApp
-    const formatRupiahPesan = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0
-    }).format(totalHargaAkhir);
-
-    // Mengisi Tabel Ringkasan Sukses di Halaman Web
+    // Mengisi data visual ke halaman ringkasan sukses
     document.getElementById("resNama").innerText = nama;
     document.getElementById("resProduk").innerText = namaProduk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
-    document.getElementById("resKurir").innerText = namaKurir.split(" - ")[0];
+    document.getElementById("resKurir").innerText = teksKurirLengkap;
     document.getElementById("resAlamat").innerText = alamat;
     document.getElementById("resTotal").innerText = formatRupiah;
 
-    // BARU: Membuat Teks Format Pesanan Rapi untuk dikirim ke WhatsApp
+    // Menyusun teks template untuk chat WhatsApp pembeli
     const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
                       "*Nama:* " + nama + "\n" +
                       "*Produk:* " + namaProduk + "\n" +
                       "*Jumlah:* " + jumlah + " pcs\n" +
-                      "*Pengiriman:* " + namaKurir + "\n" +
+                      "*Pengiriman:* " + teksKurirLengkap + "\n" +
                       "*Alamat:* " + alamat + "\n\n" +
-                      "*TOTAL BAYAR:* " + formatRupiahPesan;
+                      "*TOTAL BAYAR:* " + formatRupiah;
 
-    // Membuat link wa.me yang valid
+    // Menyusun link tautan wa.me resmi
     const urlWhatsApp = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
 
-    // BARU: Memasukkan Link WhatsApp secara otomatis ke Tombol Konfirmasi Hijau
+    // Memasukkan link WhatsApp secara otomatis ke tombol hijau
     document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
 
-    // Mengubah tampilan layar dari Form ke Halaman Sukses
+    // Proses Transisi Halaman: Sembunyikan Form, Munculkan Halaman Sukses
     document.getElementById("formSection").style.display = "none";
+    document.getElementById("successSection").style.display = "block";
+});
+
+// Fungsi untuk mereset dan kembali ke form awal
+    function resetForm() {
+        document.getElementById("orderForm").reset();
+        document.getElementById("successSection").style.display = "none";
+        document.getElementById("formSection").style.display = "block";
+        }
