@@ -116,7 +116,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
                       "*Alamat:* " + alamat;
 
     // Menggunakan format wa.me yang jauh lebih ramah dan kompatibel untuk browser HP
-    const urlLengkap = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+    const urlLengkap = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
 
     // Membuka paksa aplikasi WhatsApp di tab baru yang diizinkan oleh browser HP
     window.open(urlLengkap, '_blank');
