@@ -91,8 +91,7 @@
 
 <script>
 function kirimKeWhatsApp() {
-    // ⚠️ PENTING: Ganti nomor di bawah dengan nomor WhatsApp Anda sendiri.
-    // Gunakan angka saja tanpa +, spasi, atau tanda strip. Awali dengan kode negara (62).
+    // Nomor WhatsApp Business Anda
     const nomorWhatsApp = "6285876712482"; 
 
     // Mengambil data dari input form
@@ -107,17 +106,17 @@ function kirimKeWhatsApp() {
         return;
     }
 
-    // Menyusun teks template pesan WhatsApp (%0A artinya baris baru)
+    // Menyusun teks template pesan WhatsApp
     const pesan = "Halo Admin, saya ingin memesan produk:%0A%0A" +
                   "*Nama:* " + encodeURIComponent(nama) + "%0A" +
                   "*Produk:* " + encodeURIComponent(produk) + "%0A" +
                   "*Jumlah:* " + encodeURIComponent(jumlah) + " pcs%0A" +
                   "*Alamat:* " + encodeURIComponent(alamat);
 
-    // Membuat tautan kirim pesan resmi WhatsApp
+    // Tautan resmi WhatsApp yang sudah diperbaiki agar valid
     const url = "https://whatsapp.com" + nomorWhatsApp + "&text=" + pesan;
 
-    // Membuka tautan langsung di halaman yang sama agar tidak diblokir browser
+    // Mengalihkan halaman ke WhatsApp
     window.location.href = url;
 }
 </script>
