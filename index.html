@@ -39,7 +39,8 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-        button {
+        .btn-wa {
+            display: block;
             width: 100%;
             padding: 12px;
             background-color: #25D366;
@@ -48,9 +49,12 @@
             border-radius: 4px;
             font-size: 16px;
             font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
             cursor: pointer;
         }
-        button:hover {
+        .btn-wa:hover {
             background-color: #128C7E;
         }
     </style>
@@ -85,14 +89,18 @@
             <textarea id="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
         </div>
 
-        <button type="button" onclick="kirimKeWhatsApp()">Kirim via WhatsApp</button>
+        <!-- Tombol diganti menjadi tag link HTML langsung agar 100% stabil -->
+        <a href="#" id="tombolKirim" class="btn-wa" onclick="prosesPesan(event)">Kirim via WhatsApp</a>
     </form>
 </div>
 
 <script>
-function kirimKeWhatsApp() {
-    // Nomor WhatsApp Business Anda
-    const nomorWhatsApp = "6285876712482"; 
+function prosesPesan(event) {
+    // Mencegah link kosong berjalan sebelum data diproses
+    event.preventDefault();
+
+    // Nomor WhatsApp Anda (Sudah dimasukkan otomatis dengan benar)
+    const nomorWA = "6285876712482"; 
 
     // Mengambil data dari input form
     const nama = document.getElementById("nama").value.trim();
@@ -100,24 +108,24 @@ function kirimKeWhatsApp() {
     const jumlah = document.getElementById("jumlah").value;
     const alamat = document.getElementById("alamat").value.trim();
 
-    // Validasi input agar tidak ada data yang kosong
+    // Validasi input agar tidak kosong
     if (nama === "" || produk === "" || jumlah === "" || alamat === "") {
         alert("Mohon lengkapi semua data pemesanan terlebih dahulu!");
         return;
     }
 
-    // Menyusun teks template pesan WhatsApp
-    const pesan = "Halo Admin, saya ingin memesan produk:%0A%0A" +
-                  "*Nama:* " + encodeURIComponent(nama) + "%0A" +
-                  "*Produk:* " + encodeURIComponent(produk) + "%0A" +
-                  "*Jumlah:* " + encodeURIComponent(jumlah) + " pcs%0A" +
-                  "*Alamat:* " + encodeURIComponent(alamat);
+    // Menyusun teks pesan WhatsApp dengan format rapi
+    const teksPesan = "Halo Admin, saya ingin memesan produk:\n\n" +
+                      "*Nama:* " + nama + "\n" +
+                      "*Produk:* " + produk + "\n" +
+                      "*Jumlah:* " + jumlah + " pcs\n" +
+                      "*Alamat:* " + alamat;
 
-    // Tautan resmi WhatsApp yang sudah diperbaiki agar valid
-    const url = "https://whatsapp.com" + nomorWhatsApp + "&text=" + pesan;
+    // Membuat URL WhatsApp yang valid menggunakan fungsi bawaan browser (encodeURIComponent)
+    const urlLengkap = "https://whatsapp.com" + nomorWA + "&text=" + encodeURIComponent(teksPesan);
 
-    // Mengalihkan halaman ke WhatsApp
-    window.location.href = url;
+    // Mengalihkan halaman ke aplikasi WhatsApp
+    window.location.href = urlLengkap;
 }
 </script>
 
