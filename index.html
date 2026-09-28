@@ -117,7 +117,7 @@ function kirimKeWhatsApp() {
     const url = "https://whatsapp.com" + nomorWhatsApp + "&text=" + pesan;
 
     // Membuka tab/aplikasi WhatsApp baru menuju nomor tujuan
-    window.open(url, '_blank');
+    window.location.href = url;
 }
 </script>
 
