@@ -44,7 +44,7 @@
         .btn-submit {
             width: 100%;
             padding: 12px;
-            background-color: #ff9800; /* Warna oranye estetik */
+            background-color: #ff9800;
             color: white;
             border: none;
             border-radius: 6px;
@@ -59,7 +59,7 @@
         
         /* Gaya Tampilan Sukses (Order Diterima) */
         .success-box {
-            display: none; /* Tersembunyi di awal */
+            display: none;
             text-align: center;
         }
         .success-icon {
@@ -146,7 +146,7 @@
 
     <!-- BLOK 2: HALAMAN SUKSES (TAMPIL SETELAH KLIK KIRIM) -->
     <div id="successSection" class="success-box">
-        <div class="success-icon">🍊</div>
+        <div class="success-icon">✅</div>
         <div class="success-title">Order diterima!</div>
         <div class="success-subtitle">Terima kasih, pesanan Anda sudah kami catat.</div>
         
@@ -163,7 +163,7 @@
 
 <script>
 document.getElementById('orderForm').addEventListener('submit', function(event) {
-    // Mencegah halaman reload
+    // Mencegah halaman reload otomatis
     event.preventDefault();
 
     // Mengambil data inputan pembeli
@@ -172,22 +172,21 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     const jumlah = document.getElementById("jumlah").value;
     const alamat = document.getElementById("alamat").value.trim();
 
-    // Memasukkan data inputan ke dalam kotak Ringkasan Pesanan (Success Box)
+    // Memasukkan data ke dalam Ringkasan Pesanan
     document.getElementById("resNama").innerText = nama;
     document.getElementById("resProduk").innerText = produk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
     document.getElementById("resAlamat").innerText = alamat;
 
-    // EFEK TRANSISI: Menyembunyikan form dan memunculkan tulisan "Order Diterima"
+    // SUDAH DIPERBAIKI: Mengubah tampilan section dengan benar tanpa kata ganda
     document.getElementById("formSection").style.display = "none";
-    document.getElementById("successSection").style.style.display = "block"; // Pengaman double layer
-    document.getElementById("successSection").setAttribute("style", "display: block;");
+    document.getElementById("successSection").style.display = "block";
 });
 
 function resetForm() {
-    // Mengembalikan tampilan ke form awal jika pembeli ingin order lagi
+    // Mengembalikan ke form awal jika tombol buat order lagi diklik
     document.getElementById("orderForm").reset();
-    document.getElementById("successSection").setAttribute("style", "display: none;");
+    document.getElementById("successSection").style.display = "none";
     document.getElementById("formSection").style.display = "block";
 }
 </script>
