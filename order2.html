@@ -53,11 +53,14 @@
             cursor: pointer;
             transition: background 0.3s;
         }
-        .btn-submit:hover {
+        .btn-submit:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .btn-submit:hover:not(:disabled) {
             background-color: #e68a00;
         }
         
-        /* Gaya Tampilan Sukses (Order Diterima) */
         .success-box {
             display: none;
             text-align: center;
@@ -112,7 +115,6 @@
             font-size: 20px;
         }
         
-        /* Tombol Hijau WhatsApp */
         .btn-wa-confirm {
             display: block;
             width: 100%;
@@ -147,18 +149,17 @@
 <body>
 
 <div class="form-container">
-    <!-- BLOK 1: HALAMAN FORM UTAMA -->
     <div id="formSection">
         <h2>Form Pemesanan Produk</h2>
         <form id="orderForm">
             <div class="form-group">
                 <label for="nama">Nama Lengkap:</label>
-                <input type="text" id="nama" required placeholder="Masukkan nama Anda">
+                <input type="text" id="nama" name="nama" required placeholder="Masukkan nama Anda">
             </div>
 
             <div class="form-group">
                 <label for="produk">Pilih Produk:</label>
-                <select id="produk" required>
+                <select id="produk" name="produk" required>
                     <option value="">-- Pilih Produk --</option>
                     <option value="50000">Baju Kaos Polos - Rp 50.000</option>
                     <option value="150000">Jaket Hoodie - Rp 150.000</option>
@@ -168,12 +169,12 @@
 
             <div class="form-group">
                 <label for="jumlah">Jumlah Order:</label>
-                <input type="number" id="jumlah" min="1" value="1" required>
+                <input type="number" id="jumlah" name="jumlah" min="1" value="1" required>
             </div>
 
             <div class="form-group">
                 <label for="ongkir">Metode Pengiriman (Ongkir):</label>
-                <select id="ongkir" required>
+                <select id="ongkir" name="kurir" required>
                     <option value="">-- Pilih Kurir --</option>
                     <option value="9000">J&T Reguler - Rp 9.000</option>
                     <option value="11000">JNE Reguler - Rp 11.000</option>
@@ -184,18 +185,17 @@
 
             <div class="form-group">
                 <label for="alamat">Alamat Pengiriman:</label>
-                <textarea id="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
+                <textarea id="alamat" name="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">Kirim Order</button>
+            <button type="submit" id="submitBtn" class="btn-submit">Kirim Order</button>
         </form>
     </div>
 
-    <!-- BLOK 2: HALAMAN SUKSES (ORDER DITERIMA) -->
     <div id="successSection" class="success-box">
         <div class="success-icon">✅</div>
         <div class="success-title">Order diterima!</div>
-        <div class="success-subtitle">Terima kasih, pesanan Anda sudah kami catat.</div>
+        <div class="success-subtitle">Terima kasih, pesanan Anda sudah kami catat otomatis di pembukuan toko.</div>
         
         <div class="order-summary">
             <div class="summary-item"><span>Nama:</span> <strong id="resNama">-</strong></div>
@@ -206,9 +206,7 @@
             <div class="total-item"><span>Total Bayar:</span> <strong id="resTotal">Rp 0</strong></div>
         </div>
 
-        <!-- Tombol Kirim Chat ke WhatsApp -->
         <a href="#" id="waConfirmBtn" target="_blank" class="btn-wa-confirm">Konfirmasi via WhatsApp</a>
-
         <br>
         <a class="btn-repeat" onclick="resetForm()">Buat order lagi</a>
     </div>
@@ -218,68 +216,73 @@
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Nomor WhatsApp tujuan Anda
+    // Mengunci tombol agar tidak diklik dua kali saat proses kirim data ke Google Sheets
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.innerText = "Memproses Order...";
+    submitBtn.disabled = true;
+
     const nomorWA = "6285876712482"; 
 
-    // Mengambil nilai teks input biasa
     const nama = document.getElementById("nama").value.trim();
     const alamat = document.getElementById("alamat").value.trim();
     const jumlah = parseInt(document.getElementById("jumlah").value);
 
-    // Memproses Informasi Produk (Mengambil Teks Pilihan)
     const produkSelect = document.getElementById("produk");
     const hargaProduk = parseInt(produkSelect.value);
     const namaProduk = produkSelect.options[produkSelect.selectedIndex].text; 
 
-    // Memproses Informasi Kurir (Mengambil Teks Pilihan)
     const ongkirSelect = document.getElementById("ongkir");
     const biayaOngkir = parseInt(ongkirSelect.value);
     const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text; 
 
-    // Perhitungan Total Harga
     const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
 
-    // Membuat Format Rupiah
     const formatRupiah = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         minimumFractionDigits: 0
     }).format(totalHargaAkhir);
 
-    // Mengisi data ke halaman ringkasan sukses
-    document.getElementById("resNama").innerText = nama;
-    document.getElementById("resProduk").innerText = namaProduk;
-    document.getElementById("resJumlah").innerText = jumlah + " pcs";
-    document.getElementById("resKurir").innerText = namaKurir;
-    document.getElementById("resAlamat").innerText = alamat;
-    document.getElementById("resTotal").innerText = formatRupiah;
+    // Jalur Pengiriman Data Otomatis ke Google Sheets via Fetch API
+    // ⚠️ MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzgpw_zidBdAgnqJmFl980hKzvjjUVCeKT7EFzVKn5UDDxQtX8T6hmeF4gbzWm0pm8v/exec';
+    
+    // Menyusun paket data khusus untuk Google Sheets
+    const formData = new FormData();
+    formData.append('nama', nama);
+    formData.append('produk', namaProduk);
+    formData.append('jumlah', jumlah + " pcs");
+    formData.append('kurir', namaKurir);
+    formData.append('alamat', alamat);
+    formData.append('total', formatRupiah);
 
-    // Menyusun teks template untuk chat WhatsApp pembeli
-    const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
-                      "*Nama:* " + nama + "\n" +
-                      "*Produk:* " + namaProduk + "\n" +
-                      "*Jumlah:* " + jumlah + " pcs\n" +
-                      "*Pengiriman:* " + namaKurir + "\n" +
-                      "*Alamat:* " + alamat + "\n\n" +
-                      "*TOTAL BAYAR:* " + formatRupiah;
+    // Mengirimkan data ke Google Sheets di latar belakang
+    fetch(scriptURL, { method: 'POST', body: formData})
+    .then(response => {
+        // Teks Sukses Web
+        document.getElementById("resNama").innerText = nama;
+        document.getElementById("resProduk").innerText = namaProduk;
+        document.getElementById("resJumlah").innerText = jumlah + " pcs";
+        document.getElementById("resKurir").innerText = namaKurir;
+        document.getElementById("resAlamat").innerText = alamat;
+        document.getElementById("resTotal").innerText = formatRupiah;
 
-    // Menyusun link tautan wa.me resmi
-    const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+        // Teks Pesan WhatsApp
+        const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
+                          "*Nama:* " + nama + "\n" +
+                          "*Produk:* " + namaProduk + "\n" +
+                          "*Jumlah:* " + jumlah + " pcs\n" +
+                          "*Pengiriman:* " + namaKurir + "\n" +
+                          "*Alamat:* " + alamat + "\n\n" +
+                          "*TOTAL BAYAR:* " + formatRupiah;
 
-    // Memasukkan link WhatsApp ke tombol hijau
-    document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
+const urlWhatsApp = "wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
+        
+// Ubah Tampilan ke Halaman Suksesdocument.getElementById("formSection").style.display = "none";document.getElementById("successSection").style.display = "block";}).catch(error => {alert("Waduh, terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");submitBtn.innerText = "Kirim Order";submitBtn.disabled = false;console.error('Error!', error.message);});});
+        
+function resetForm() {const submitBtn = document.getElementById("submitBtn");submitBtn.innerText = "Kirim Order";submitBtn.disabled = false;document.getElementById("orderForm").reset();document.getElementById("successSection").style.display = "none";document.getElementById("formSection").style.display = "block";}
 
-    // Membuka Halaman Sukses
-    document.getElementById("formSection").style.display = "none";
-    document.getElementById("successSection").style.display = "block";
-});
-
-function resetForm() {
-    document.getElementById("orderForm").reset();
-    document.getElementById("successSection").style.display = "none";
-    document.getElementById("formSection").style.display = "block";
-}
-</script>
+          </script>
 
 </body>
 </html>
