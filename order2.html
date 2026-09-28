@@ -218,37 +218,37 @@
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Nomor WhatsApp Anda (Menggunakan nomor jualan Anda yang valid)
+    // Nomor WhatsApp tujuan
     const nomorWA = "6285876712482"; 
 
-    // Mengambil nilai input
+    // Mengambil nilai teks input biasa
     const nama = document.getElementById("nama").value.trim();
     const alamat = document.getElementById("alamat").value.trim();
     const jumlah = parseInt(document.getElementById("jumlah").value);
 
-    // Memproses Informasi Produk
+    // Memproses Informasi Produk (Perbaikan Mengambil Teks Saja)
     const produkSelect = document.getElementById("produk");
     const hargaProduk = parseInt(produkSelect.value);
     const teksProdukLengkap = produkSelect.options[produkSelect.selectedIndex].text;
-    const namaProduk = teksProdukLengkap.split(" - ")[0]; // Mengambil tulisan nama produknya saja
+    const namaProduk = teksProdukLengkap.split(" - ")[0]; // Mengambil nama teks bagian depan saja
 
-    // Memproses Informasi Kurir
+    // Memproses Informasi Kurir (Perbaikan Mengambil Teks Saja)
     const ongkirSelect = document.getElementById("ongkir");
     const biayaOngkir = parseInt(ongkirSelect.value);
     const teksKurirLengkap = ongkirSelect.options[ongkirSelect.selectedIndex].text;
-    const namaKurir = teksKurirLengkap.split(" - ")[0]; // Mengambil tulisan nama kurirnya saja
+    const namaKurir = teksKurirLengkap.split(" - ")[0]; // Mengambil nama kurir bagian depan saja
 
-    // Rumus Matematika Perhitungan Total Harga
+    // Perhitungan Total Harga
     const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
 
-    // Membuat Format Mata Uang Rupiah yang rapi
+    // Membuat Format Rupiah
     const formatRupiah = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
         minimumFractionDigits: 0
     }).format(totalHargaAkhir);
 
-    // Mengisi data visual ke halaman ringkasan sukses
+    // Mengisi data visual ke halaman ringkasan sukses dengan teks murni
     document.getElementById("resNama").innerText = nama;
     document.getElementById("resProduk").innerText = namaProduk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
@@ -268,17 +268,16 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     // Menyusun link tautan wa.me resmi
     const urlWhatsApp = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
 
-    // Memasukkan link WhatsApp secara otomatis ke tombol hijau
+    // Memasukkan link WhatsApp ke tombol hijau
     document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
 
-    // Proses Transisi Halaman: Sembunyikan Form, Munculkan Halaman Sukses
+    // Proses Transisi Halaman
     document.getElementById("formSection").style.display = "none";
     document.getElementById("successSection").style.display = "block";
 });
 
-// Fungsi untuk mereset dan kembali ke form awal
-    function resetForm() {
-        document.getElementById("orderForm").reset();
-        document.getElementById("successSection").style.display = "none";
-        document.getElementById("formSection").style.display = "block";
-        }
+function resetForm() {
+    document.getElementById("orderForm").reset();
+    document.getElementById("successSection").style.display = "none";
+    document.getElementById("formSection").style.display = "block";
+}
