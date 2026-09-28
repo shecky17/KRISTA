@@ -276,7 +276,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
                           "*Alamat:* " + alamat + "\n\n" +
                           "*TOTAL BAYAR:* " + formatRupiah;
 
-const urlWhatsApp = "wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
         document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
         
 // Ubah Tampilan ke Halaman Sukses
