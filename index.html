@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pemesanan Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 500px;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #128C7E;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Form Pemesanan Produk</h2>
+    <form id="orderForm">
+        <div class="form-group">
+            <label for="nama">Nama Lengkap:</label>
+            <input type="text" id="nama" required placeholder="Masukkan nama Anda">
+        </div>
+
+        <div class="form-group">
+            <label for="produk">Pilih Produk:</label>
+            <select id="produk" required>
+                <option value="">-- Pilih Produk --</option>
+                <option value="Baju Kaos Polos">Baju Kaos Polos - Rp 50.000</option>
+                <option value="Jaket Hoodie">Jaket Hoodie - Rp 150.000</option>
+                <option value="Topi Snapback">Topi Snapback - Rp 35.000</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="jumlah">Jumlah Order:</label>
+            <input type="number" id="jumlah" min="1" value="1" required>
+        </div>
+
+        <div class="form-group">
+            <label for="alamat">Alamat Pengiriman:</label>
+            <textarea id="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
+        </div>
+
+        <button type="button" onclick="kirimKeWhatsApp()">Kirim via WhatsApp</button>
+    </form>
+</div>
+
+<script>
+function kirimKeWhatsApp() {
+    // GANTI NOMOR INI dengan nomor WhatsApp Anda (Gunakan kode negara, contoh 62 untuk Indonesia)
+    const nomorWhatsApp = "6285876712482"; 
+
+    // Mengambil data dari input form
+    const nama = document.getElementById("nama").value;
+    const produk = document.getElementById("produk").value;
+    const jumlah = document.getElementById("jumlah").value;
+    const alamat = document.getElementById("alamat").value;
+
+    // Validasi sederhana agar form tidak kosong
+    if (nama === "" || produk === "" || jumlah === "" || alamat === "") {
+        alert("Mohon lengkapi semua data pemesanan terlebih dahulu!");
+        return;
+    }
+
+    // Menyusun format pesan WhatsApp teks rapi dengan baris baru (%0A)
+    const pesan = "Halo Admin, saya ingin memesan produk:%0A%0A" +
+                  "*Nama:* " + nama + "%0A" +
+                  "*Produk:* " + produk + "%0A" +
+                  "*Jumlah:* " + jumlah + " pcs%0A" +
+                  "*Alamat:* " + alamat;
+
+    // Membuat URL WhatsApp kirim pesan resmi
+    const url = "https://whatsapp.com" + nomorWhatsApp + "&text=" + pesan;
+
+    // Membuka tab/aplikasi WhatsApp baru menuju nomor tujuan
+    window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>
