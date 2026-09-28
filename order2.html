@@ -98,6 +98,19 @@
         .summary-item strong {
             color: #111;
         }
+        .total-item {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #ff9800;
+            display: flex;
+            justify-content: space-between;
+            border-top: 2px solid #ff9800;
+            padding-top: 10px;
+        }
+        .total-item strong {
+            color: #ff9800;
+            font-size: 20px;
+        }
         .btn-repeat {
             display: inline-block;
             color: #ff9800;
@@ -122,11 +135,12 @@
 
             <div class="form-group">
                 <label for="produk">Pilih Produk:</label>
+                <!-- Nilai value disesuaikan dengan harga dasar angka saja untuk memudahkan rumus hitung -->
                 <select id="produk" required>
                     <option value="">-- Pilih Produk --</option>
-                    <option value="Baju Kaos Polos">Baju Kaos Polos - Rp 50.000</option>
-                    <option value="Jaket Hoodie">Jaket Hoodie - Rp 150.000</option>
-                    <option value="Topi Snapback">Topi Snapback - Rp 35.000</option>
+                    <option value="50000">Baju Kaos Polos - Rp 50.000</option>
+                    <option value="150000">Jaket Hoodie - Rp 150.000</option>
+                    <option value="350000">Topi Snapback - Rp 35.000</option>
                 </select>
             </div>
 
@@ -155,6 +169,8 @@
             <div class="summary-item"><span>Produk:</span> <strong id="resProduk">-</strong></div>
             <div class="summary-item"><span>Jumlah:</span> <strong id="resJumlah">-</strong></div>
             <div class="summary-item"><span>Alamat:</span> <strong id="resAlamat">-</strong></div>
+            <!-- Bagian Total Harga Baru -->
+            <div class="total-item"><span>Total Bayar:</span> <strong id="resTotal">Rp 0</strong></div>
         </div>
 
         <a class="btn-repeat" onclick="resetForm()">Buat order lagi</a>
@@ -163,28 +179,39 @@
 
 <script>
 document.getElementById('orderForm').addEventListener('submit', function(event) {
-    // Mencegah halaman reload otomatis
     event.preventDefault();
 
-    // Mengambil data inputan pembeli
+    // Mengambil elemen HTML untuk dibaca teks pilihannya
     const nama = document.getElementById("nama").value.trim();
-    const produk = document.getElementById("produk").value;
-    const jumlah = document.getElementById("jumlah").value;
+    const produkSelect = document.getElementById("produk");
+    const hargaProduk = parseInt(produkSelect.value); // Mengambil harga angka (misal: 50000)
+    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text.split(" - ")[0]; // Mengambil nama teksnya saja
+    const jumlah = parseInt(document.getElementById("jumlah").value);
     const alamat = document.getElementById("alamat").value.trim();
+
+    // RUMUS JAVASCRIPT: Menghitung total harga
+    const totalHarga = hargaProduk * jumlah;
+
+    // FUNGSI FORMAT RUPIAH: Mengubah angka 150000 menjadi string Rp 150.000
+    const formatRupiah = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        minimumFractionDigits: 0
+    }).format(totalHarga);
 
     // Memasukkan data ke dalam Ringkasan Pesanan
     document.getElementById("resNama").innerText = nama;
-    document.getElementById("resProduk").innerText = produk;
+    document.getElementById("resProduk").innerText = namaProduk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
     document.getElementById("resAlamat").innerText = alamat;
+    document.getElementById("resTotal").innerText = formatRupiah;
 
-    // SUDAH DIPERBAIKI: Mengubah tampilan section dengan benar tanpa kata ganda
+    // Mengubah tampilan ke halaman sukses
     document.getElementById("formSection").style.display = "none";
     document.getElementById("successSection").style.display = "block";
 });
 
 function resetForm() {
-    // Mengembalikan ke form awal jika tombol buat order lagi diklik
     document.getElementById("orderForm").reset();
     document.getElementById("successSection").style.display = "none";
     document.getElementById("formSection").style.display = "block";
