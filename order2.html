@@ -276,11 +276,27 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
                           "*Alamat:* " + alamat + "\n\n" +
                           "*TOTAL BAYAR:* " + formatRupiah;
 
-const urlWhatsApp = "wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
+const urlWhatsApp = "wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+        document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
         
-// Ubah Tampilan ke Halaman Suksesdocument.getElementById("formSection").style.display = "none";document.getElementById("successSection").style.display = "block";}).catch(error => {alert("Waduh, terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");submitBtn.innerText = "Kirim Order";submitBtn.disabled = false;console.error('Error!', error.message);});});
+// Ubah Tampilan ke Halaman Sukses
+        document.getElementById("formSection").style.display = "none";
+        document.getElementById("successSection").style.display = "block";
+    })
+        .catch(error => {alert("Waduh, terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");
+                         submitBtn.innerText = "Kirim Order";
+                         submitBtn.disabled = false;
+                         console.error('Error!', error.message);
+                        });
+});
         
-function resetForm() {const submitBtn = document.getElementById("submitBtn");submitBtn.innerText = "Kirim Order";submitBtn.disabled = false;document.getElementById("orderForm").reset();document.getElementById("successSection").style.display = "none";document.getElementById("formSection").style.display = "block";}
+function resetForm() {
+    const submitBtn = document.getElementById("submitBtn");
+    submitBtn.innerText = "Kirim Order";
+    submitBtn.disabled = false;
+    document.getElementById("orderForm").reset();
+    document.getElementById("successSection").style.display = "none";
+    document.getElementById("formSection").style.display = "block";}
 
           </script>
 
