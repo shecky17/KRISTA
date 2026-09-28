@@ -218,7 +218,7 @@
 document.getElementById('orderForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    // Nomor WhatsApp tujuan
+    // Nomor WhatsApp tujuan Anda
     const nomorWA = "6285876712482"; 
 
     // Mengambil nilai teks input biasa
@@ -226,17 +226,15 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     const alamat = document.getElementById("alamat").value.trim();
     const jumlah = parseInt(document.getElementById("jumlah").value);
 
-    // Memproses Informasi Produk (Perbaikan Mengambil Teks Saja)
+    // Memproses Informasi Produk (Mengambil Teks Pilihan)
     const produkSelect = document.getElementById("produk");
     const hargaProduk = parseInt(produkSelect.value);
-    const teksProdukLengkap = produkSelect.options[produkSelect.selectedIndex].text;
-    const namaProduk = teksProdukLengkap.split(" - ")[0]; // Mengambil nama teks bagian depan saja
+    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text; 
 
-    // Memproses Informasi Kurir (Perbaikan Mengambil Teks Saja)
+    // Memproses Informasi Kurir (Mengambil Teks Pilihan)
     const ongkirSelect = document.getElementById("ongkir");
     const biayaOngkir = parseInt(ongkirSelect.value);
-    const teksKurirLengkap = ongkirSelect.options[ongkirSelect.selectedIndex].text;
-    const namaKurir = teksKurirLengkap.split(" - ")[0]; // Mengambil nama kurir bagian depan saja
+    const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text; 
 
     // Perhitungan Total Harga
     const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
@@ -248,11 +246,11 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
         minimumFractionDigits: 0
     }).format(totalHargaAkhir);
 
-    // Mengisi data visual ke halaman ringkasan sukses dengan teks murni
+    // Mengisi data ke halaman ringkasan sukses
     document.getElementById("resNama").innerText = nama;
     document.getElementById("resProduk").innerText = namaProduk;
     document.getElementById("resJumlah").innerText = jumlah + " pcs";
-    document.getElementById("resKurir").innerText = teksKurirLengkap;
+    document.getElementById("resKurir").innerText = namaKurir;
     document.getElementById("resAlamat").innerText = alamat;
     document.getElementById("resTotal").innerText = formatRupiah;
 
@@ -261,7 +259,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
                       "*Nama:* " + nama + "\n" +
                       "*Produk:* " + namaProduk + "\n" +
                       "*Jumlah:* " + jumlah + " pcs\n" +
-                      "*Pengiriman:* " + teksKurirLengkap + "\n" +
+                      "*Pengiriman:* " + namaKurir + "\n" +
                       "*Alamat:* " + alamat + "\n\n" +
                       "*TOTAL BAYAR:* " + formatRupiah;
 
@@ -271,7 +269,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
     // Memasukkan link WhatsApp ke tombol hijau
     document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
 
-    // Proses Transisi Halaman
+    // Membuka Halaman Sukses
     document.getElementById("formSection").style.display = "none";
     document.getElementById("successSection").style.display = "block";
 });
@@ -281,3 +279,7 @@ function resetForm() {
     document.getElementById("successSection").style.display = "none";
     document.getElementById("formSection").style.display = "block";
 }
+</script>
+
+</body>
+</html>
