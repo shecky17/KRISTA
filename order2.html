@@ -298,38 +298,53 @@ Konfirmasi via WhatsApp
             Buat order lagi
             
             // ==================== 1. LOGIKA SLIDESHOW OTOMATIS ====================
-            // Daftar file foto Anda (pastikan nama file sesuai dengan yang Anda upload di GitHub)const daftarFoto = ["dimsum1.jpg", "dimsum2.png"];
-            let indeksAktif = 0;
-            let intervalSlideshow;
-            function jalankanSlideshowOtomatis() {
-            
-            // Foto akan berganti setiap 3000 milidetik (3 detik)
-            intervalSlideshow = setInterval(function() {
-            indeksAktif = (indeksAktif + 1) % daftarFoto.length;
-            perbaruiTampilanFoto(indeksAktif);
-            }, 3000);
+// ⚠️ SESUAIKAN NAMA DI BAWAH INI dengan nama file asli Anda di GitHub (Perhatikan huruf besar/kecilnya!)
+const daftarFoto = ["dimsum1.jpg", "dimsum2.png"];
+let indeksAktif = 0;
+let intervalSlideshow;
+
+function jalankanSlideshowOtomatis() {
+    // Hapus interval lama agar tidak menumpuk dan macet
+    clearInterval(intervalSlideshow); 
+    
+    intervalSlideshow = setInterval(function() {
+        indeksAktif = (indeksAktif + 1) % daftarFoto.length;
+        perbaruiTampilanFoto(indeksAktif);
+    }, 3000); // Berganti setiap 3 detik
+}
+
+function perbaruiTampilanFoto(indeks) {
+    const elemenFotoUtama = document.getElementById("fotoUtama");
+    if (elemenFotoUtama) {
+        elemenFotoUtama.src = daftarFoto[indeks];
+    }
+    
+    // Mengatur garis penanda (border) oranye pada kotak kecil di bawahnya
+    const thumbnails = document.getElementsByClassName("thumb-img");
+    if (thumbnails.length > 0) {
+        for (let i = 0; i < thumbnails.length; i++) {
+            if (thumbnails[i]) {
+                thumbnails[i].classList.remove("active");
             }
-            
-            function perbaruiTampilanFoto(indeks) {
-            // Mengubah source gambar utama
-            document.getElementById("fotoUtama").src = daftarFoto[indeks];
-            
-            // Mengatur garis penanda (border) pada foto kecil di bawahnya
-            const thumbnails = document.getElementsByClassName("thumb-img");
-            for (let i = 0; i < thumbnails.length; i++) {thumbnails[i].classList.remove("active");
-                }
-                thumbnails[indeks].classList.add("active");
-                }
-                
-            function gantiFotoManual(indeks) {
-            // Jika foto kecil diklik manual oleh pembeli, hentikan slideshow otomatis sementara agar tidak melompat
-                clearInterval(intervalSlideshow);
-                indeksAktif = indeks;perbaruiTampilanFoto(indeksAktif);
-            // Jalankan kembali slideshow otomatisnya
-                jalankanSlideshowOtomatis();
-                }
-            
-            // Menjalankan fitur slideshow langsung saat halaman web pertama kali terbukajalankanSlideshowOtomatis();
+        }
+        if (thumbnails[indeks]) {
+            thumbnails[indeks].classList.add("active");
+        }
+    }
+}
+
+function gantiFotoManual(indeks) {
+    indeksAktif = (indeks >= 0 && indeks < daftarFoto.length) ? indeks : 0;
+    perbaruiTampilanFoto(indeksAktif);
+    // Jalankan ulang detikan agar pergantian otomatisnya segar kembali
+    jalankanSlideshowOtomatis();
+}
+
+// Menjalankan fitur slideshow secara aman saat halaman web terbuka
+document.addEventListener("DOMContentLoaded", function() {
+    jalankanSlideshowOtomatis();
+});
+
                 
             // ==================== 2. LOGIKA PENGIRIMAN DATA FORM ====================
                 document.getElementById('orderForm').addEventListener('submit', function(event) {
