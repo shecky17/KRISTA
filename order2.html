@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pemesanan Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            max-width: 500px;
+            background: #ffffff;
+            margin: 40px auto;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: #ff9800; /* Warna oranye estetik */
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-submit:hover {
+            background-color: #e68a00;
+        }
+        
+        /* Gaya Tampilan Sukses (Order Diterima) */
+        .success-box {
+            display: none; /* Tersembunyi di awal */
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 50px;
+            color: #4caf50;
+            margin-bottom: 15px;
+        }
+        .success-title {
+            color: #333;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .success-subtitle {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+        .order-summary {
+            background-color: #f9f9f9;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .summary-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: #444;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #eee;
+            padding-bottom: 5px;
+        }
+        .summary-item strong {
+            color: #111;
+        }
+        .btn-repeat {
+            display: inline-block;
+            color: #ff9800;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <!-- BLOK 1: FORM UTAMA -->
+    <div id="formSection">
+        <h2>Form Pemesanan Produk</h2>
+        <form id="orderForm">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap:</label>
+                <input type="text" id="nama" required placeholder="Masukkan nama Anda">
+            </div>
+
+            <div class="form-group">
+                <label for="produk">Pilih Produk:</label>
+                <select id="produk" required>
+                    <option value="">-- Pilih Produk --</option>
+                    <option value="Baju Kaos Polos">Baju Kaos Polos - Rp 50.000</option>
+                    <option value="Jaket Hoodie">Jaket Hoodie - Rp 150.000</option>
+                    <option value="Topi Snapback">Topi Snapback - Rp 35.000</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="jumlah">Jumlah Order:</label>
+                <input type="number" id="jumlah" min="1" value="1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="alamat">Alamat Pengiriman:</label>
+                <textarea id="alamat" rows="3" required placeholder="Tulis alamat lengkap Anda"></textarea>
+            </div>
+
+            <button type="submit" class="btn-submit">Kirim Order</button>
+        </form>
+    </div>
+
+    <!-- BLOK 2: HALAMAN SUKSES (TAMPIL SETELAH KLIK KIRIM) -->
+    <div id="successSection" class="success-box">
+        <div class="success-icon">🍊</div>
+        <div class="success-title">Order diterima!</div>
+        <div class="success-subtitle">Terima kasih, pesanan Anda sudah kami catat.</div>
+        
+        <div class="order-summary">
+            <div class="summary-item"><span>Nama:</span> <strong id="resNama">-</strong></div>
+            <div class="summary-item"><span>Produk:</span> <strong id="resProduk">-</strong></div>
+            <div class="summary-item"><span>Jumlah:</span> <strong id="resJumlah">-</strong></div>
+            <div class="summary-item"><span>Alamat:</span> <strong id="resAlamat">-</strong></div>
+        </div>
+
+        <a class="btn-repeat" onclick="resetForm()">Buat order lagi</a>
+    </div>
+</div>
+
+<script>
+document.getElementById('orderForm').addEventListener('submit', function(event) {
+    // Mencegah halaman reload
+    event.preventDefault();
+
+    // Mengambil data inputan pembeli
+    const nama = document.getElementById("nama").value.trim();
+    const produk = document.getElementById("produk").value;
+    const jumlah = document.getElementById("jumlah").value;
+    const alamat = document.getElementById("alamat").value.trim();
+
+    // Memasukkan data inputan ke dalam kotak Ringkasan Pesanan (Success Box)
+    document.getElementById("resNama").innerText = nama;
+    document.getElementById("resProduk").innerText = produk;
+    document.getElementById("resJumlah").innerText = jumlah + " pcs";
+    document.getElementById("resAlamat").innerText = alamat;
+
+    // EFEK TRANSISI: Menyembunyikan form dan memunculkan tulisan "Order Diterima"
+    document.getElementById("formSection").style.display = "none";
+    document.getElementById("successSection").style.style.display = "block"; // Pengaman double layer
+    document.getElementById("successSection").setAttribute("style", "display: block;");
+});
+
+function resetForm() {
+    // Mengembalikan tampilan ke form awal jika pembeli ingin order lagi
+    document.getElementById("orderForm").reset();
+    document.getElementById("successSection").setAttribute("style", "display: none;");
+    document.getElementById("formSection").style.display = "block";
+}
+</script>
+
+</body>
+</html>
