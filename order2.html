@@ -264,7 +264,7 @@ document.getElementById('orderForm').addEventListener('submit', function(event) 
                       "*TOTAL BAYAR:* " + formatRupiah;
 
     // Menyusun link tautan wa.me resmi
-    const urlWhatsApp = "https://wa.me" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+    const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
 
     // Memasukkan link WhatsApp ke tombol hijau
     document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
