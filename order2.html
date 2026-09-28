@@ -388,7 +388,7 @@ Konfirmasi via WhatsApp
                 "Alamat: " + alamat + "\n\n" +
                 "TOTAL BAYAR: " + formatRupiah;
             
-            const urlWhatsApp = "wa.me" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
+            const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
                 document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
                 
             document.getElementById("formSection").style.display = "none";
