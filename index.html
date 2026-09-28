@@ -91,32 +91,33 @@
 
 <script>
 function kirimKeWhatsApp() {
-    // GANTI NOMOR INI dengan nomor WhatsApp Anda (Gunakan kode negara, contoh 62 untuk Indonesia)
+    // ⚠️ PENTING: Ganti nomor di bawah dengan nomor WhatsApp Anda sendiri.
+    // Gunakan angka saja tanpa +, spasi, atau tanda strip. Awali dengan kode negara (62).
     const nomorWhatsApp = "6285876712482"; 
 
     // Mengambil data dari input form
-    const nama = document.getElementById("nama").value;
+    const nama = document.getElementById("nama").value.trim();
     const produk = document.getElementById("produk").value;
     const jumlah = document.getElementById("jumlah").value;
-    const alamat = document.getElementById("alamat").value;
+    const alamat = document.getElementById("alamat").value.trim();
 
-    // Validasi sederhana agar form tidak kosong
+    // Validasi input agar tidak ada data yang kosong
     if (nama === "" || produk === "" || jumlah === "" || alamat === "") {
         alert("Mohon lengkapi semua data pemesanan terlebih dahulu!");
         return;
     }
 
-    // Menyusun format pesan WhatsApp teks rapi dengan baris baru (%0A)
+    // Menyusun teks template pesan WhatsApp (%0A artinya baris baru)
     const pesan = "Halo Admin, saya ingin memesan produk:%0A%0A" +
-                  "*Nama:* " + nama + "%0A" +
-                  "*Produk:* " + produk + "%0A" +
-                  "*Jumlah:* " + jumlah + " pcs%0A" +
-                  "*Alamat:* " + alamat;
+                  "*Nama:* " + encodeURIComponent(nama) + "%0A" +
+                  "*Produk:* " + encodeURIComponent(produk) + "%0A" +
+                  "*Jumlah:* " + encodeURIComponent(jumlah) + " pcs%0A" +
+                  "*Alamat:* " + encodeURIComponent(alamat);
 
-    // Membuat URL WhatsApp kirim pesan resmi
+    // Membuat tautan kirim pesan resmi WhatsApp
     const url = "https://whatsapp.com" + nomorWhatsApp + "&text=" + pesan;
 
-    // Membuka tab/aplikasi WhatsApp baru menuju nomor tujuan
+    // Membuka tautan langsung di halaman yang sama agar tidak diblokir browser
     window.location.href = url;
 }
 </script>
