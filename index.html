@@ -197,6 +197,50 @@
                 padding: 20px;
             }
         }
+        .slideshow-container {
+  position: relative;
+  width: 100%;
+  max-width: 450px; /* Sesuaikan dengan ukuran area foto Anda */
+  height: 400px;    /* Sesuaikan tinggi yang Anda inginkan */
+  overflow: hidden;
+  border-radius: 15px; /* Opsional: membuat sudut foto melengkung */
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out; /* Kecepatan transisi perpindahan foto */
+}
+
+/* Ketika slide aktif, foto akan muncul perlahan dan animasi jalan */
+.slide.active {
+  opacity: 1;
+}
+
+.slide.active img {
+  animation: slowZoomOut 6s linear forwards; /* Durasi animasi tiap foto (6 detik) */
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.2); /* Memulai foto dari kondisi agak besar */
+}
+
+/* Animasi menggerakkan skala foto mengecil (Zoom Out) */
+@keyframes slowZoomOut {
+  from {
+    transform: scale(1.2);
+  }
+  to {
+    transform: scale(1.0);
+  }
+}
     </style>
 </head>
 <body>
@@ -204,15 +248,15 @@
 <div class="split-container">
     
     <!-- KOLOM KIRI: SLIDESHOW PRODUK -->
-    <div class="photo-column">
-        <!-- PENTING: Gambar awal wajib diarahkan ke file gambar pertama Anda -->
-        <img id="fotoUtama" src="dimsum1.jpg" alt="Foto Produk Utama" class="main-img">
-        
-        <div class="thumbnail-row">
-            <!-- Menampilkan 2 gambar sesuai foto yang berhasil diunggah di web Anda -->
-            <img src="dimsum1.jpg" onclick="gantiFotoManual(0)" class="thumb-img active">
-            <img src="dimsum2.png" onclick="gantiFotoManual(1)" class="thumb-img">
-        </div>
+    <div class="slideshow-container">
+  <!-- Foto 1 -->
+  <div class="slide active">
+    <img src="dimsum1.jpg" alt="Foto 1">
+  </div>
+  <!-- Foto 2 -->
+  <div class="slide">
+    <img src="dimsum2.png" alt="Foto 2">
+  </div>
     </div>
 
     <!-- KOLOM KANAN: FORM ORDER / RINGKASAN SUKSES -->
@@ -411,6 +455,24 @@ function resetForm() {
     document.getElementById("successSection").style.display = "none";
     document.getElementById("formSection").style.display = "block";
 }
+
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const slideInterval = 5000; // Foto berganti setiap 5 detik (5000ms)
+
+  function nextSlide() {
+    // Hapus status aktif dari foto saat ini
+    slides[currentSlide].classList.remove('active');
+    
+    // Pindah ke indeks foto berikutnya
+    currentSlide = (currentSlide + 1) % slides.length;
+    
+    // Aktifkan foto yang baru
+    slides[currentSlide].classList.add('active');
+  }
+
+  // Jalankan fungsi ganti foto secara otomatis sesuai interval waktu
+  setInterval(nextSlide, slideInterval);
 
           </script>
 
