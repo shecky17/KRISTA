@@ -201,7 +201,34 @@
   transition: opacity 1.5s ease-in-out; /* Kecepatan transisi perpindahan foto */
 }
 
-/* Ketika slide aktif, foto akan muncul perlahan dan animasi jalan */
+/* --- KODE TAMBAHAN UNTUK MERAPIKAN THUMBNAIL (TARUH DI BARIS 203) --- */
+.thumbnail-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    justify-content: center;
+    width: 100%;       /* Memaksa area kotak kecil melebar horizontal di bawah */
+    clear: both;       /* Mencegah elemen meluber menyamping */
+    z-index: 5;
+}
+
+.thumb-img {
+    width: 60px !important;   /* Memaksa ukuran kotak kecil tetap 60px */
+    height: 60px !important;  /* Memaksa tinggi tetap 60px */
+    object-fit: cover;        /* Menjaga foto tidak penyok/gepeng */
+    border-radius: 8px;       /* Membuat sudut melengkung halus */
+    cursor: pointer;
+    opacity: 0.5;             /* Membuat transparan samar saat tidak aktif */
+    transition: all 0.3s ease;
+}
+
+.thumb-img.active {
+    border: 2px solid #ff9800; /* Memberi garis tepi jingga menyala */
+    opacity: 1;                /* Menjadikan gambar terang solid saat aktif */
+}
+
+        
+        /* Ketika slide aktif, foto akan muncul perlahan dan animasi jalan */
 .slide.active {
   opacity: 1;
 }
