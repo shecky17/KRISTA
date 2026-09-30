@@ -414,258 +414,80 @@
 </div>
 
 <script>
-// ==================== 1. LOGIKA SLIDESHOW PRODUK (2 FOTO) ====================
-const daftarFoto = ["dimsum1.jpg", "dimsum2.png"]; 
-let indeksAktif = 0;
-let intervalSlideshow;
+    // Membungkus seluruh fungsi agar script HANYA berjalan saat semua HTML selesai dimuat browser
+    window.addEventListener('DOMContentLoaded', () => {
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const dotContainer = document.getElementById('dynamic-dots');
+        const thumbContainer = document.getElementById('dynamic-thumbs');
+        const slideInterval = 5000; // Foto berganti otomatis tiap 5 detik
+        let autoSlideTimer;
 
-function jalankanSlideshowOtomatis() {
-    clearInterval(intervalSlideshow); 
-    intervalSlideshow = setInterval(function() {
-        indeksAktif = (indeksAktif + 1) % daftarFoto.length;
-        perbaruiTampilanFoto(indeksAktif);
-    }, 3000); 
-}
+        // Validasi pengaman jika elemen tidak ditemukan di halaman
+        if (slides.length === 0 || !dotContainer || !thumbContainer) return;
 
-function perbaruiTampilanFoto(indeks) {
-    document.getElementById("fotoUtama").src = daftarFoto[indeks];
-    const thumbnails = document.getElementsByClassName("thumb-img");
-    for (let i = 0; i < thumbnails.length; i++) {
-        thumbnails[i].classList.remove("active");
-    }
-    if(thumbnails[indeks]) {
-        thumbnails[indeks].classList.add("active");
-    }
-}
+        // Kosongkan wadah terlebih dahulu untuk mencegah duplikasi/cache berulang
+        dotContainer.innerHTML = "";
+        thumbContainer.innerHTML = "";
 
-function gantiFotoManual(indeks) {
-    indeksAktif = indeks;
-    perbaruiTampilanFoto(indeksAktif);
-    jalankanSlideshowOtomatis();
-}
-
-// Otomatis jalan saat web dimuat
-jalankanSlideshowOtomatis();
-
-
-// ==================== 2. LOGIKA VALIDASI DAN PENGIRIMAN DATA ====================
-function prosesValidasiDanKirim() {
-    // Membaca data inputan
-    const nama = document.getElementById("nama").value.trim();
-    const alamat = document.getElementById("alamat").value.trim();
-    const jumlahInput = document.getElementById("jumlah").value;
-    const produkSelect = document.getElementById("produk");
-    const ongkirSelect = document.getElementById("ongkir");
-
-    // Validasi Manual karena tombol bertipe button biasa
-    if (nama === "" || produkSelect.value === "" || jumlahInput === "" || ongkirSelect.value === "" || alamat === "") {
-        alert("Mohon lengkapi semua data formulir pemesanan terlebih dahulu!");
-        return;
-    }
-
-    const jumlah = parseInt(jumlahInput);
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.innerText = "Memproses Order...";
-    submitBtn.disabled = true;
-
-    const nomorWA = "6285876712482"; 
-    const hargaProduk = parseInt(produkSelect.value);
-    const namaProduk = produkSelect.options[produkSelect.selectedIndex].text; 
-    const biayaOngkir = parseInt(ongkirSelect.value);
-    const namaKurir = ongkirSelect.options[ongkirSelect.selectedIndex].text; 
-
-    const totalHargaAkhir = (hargaProduk * jumlah) + biayaOngkir;
-
-    const formatRupiah = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0
-    }).format(totalHargaAkhir);
-
-    // ⚠️ MASUKKAN KEMBALI URL GOOGLE APPS SCRIPT ANDA DI BAWAH INI
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzgpw_zidBdAgnqJmFl980hKzvjjUVCeKT7EFzVKn5UDDxQtX8T6hmeF4gbzWm0pm8v/exec';
-    
-    const formData = new FormData();
-    formData.append('nama', nama);
-    formData.append('produk', namaProduk);
-    formData.append('jumlah', jumlah + " pcs");
-    formData.append('kurir', namaKurir);
-    formData.append('alamat', alamat);
-    formData.append('total', formatRupiah);
-
-    // Kirim data secara senyap (Fetch API) tanpa reload halaman
-    fetch(scriptURL, { method: 'POST', body: formData})
-    .then(response => {
-        // Tampilkan rangkuman ke Halaman Sukses
-        document.getElementById("resNama").innerText = nama;
-        document.getElementById("resProduk").innerText = namaProduk;
-        document.getElementById("resJumlah").innerText = jumlah + " pcs";
-        document.getElementById("resKurir").innerText = namaKurir;
-        document.getElementById("resAlamat").innerText = alamat;
-        document.getElementById("resTotal").innerText = formatRupiah;
-
-        // Susun teks konfirmasi chat WhatsApp
-        const teksPesan = "Halo Admin, saya telah melakukan pemesanan via Web:\n\n" +
-                          "*Nama:* " + nama + "\n" +
-                          "*Produk:* " + namaProduk + "\n" +
-                          "*Jumlah:* " + jumlah + " pcs\n" +
-                          "*Pengiriman:* " + namaKurir + "\n" +
-                          "*Alamat:* " + alamat + "\n\n" +
-                          "*TOTAL BAYAR:* " + formatRupiah;
-
-        // ✔️ SUDAH DIPERBAIKI: Menggunakan alamat lengkap tautan WhatsApp resmi agar tidak error 404
-        const urlWhatsApp = "https://wa.me/" + nomorWA + "?text=" + encodeURIComponent(teksPesan);
-        document.getElementById("waConfirmBtn").setAttribute("href", urlWhatsApp);
-
-        // Transisi hilangkan form, munculkan nota sukses
-        document.getElementById("formSection").style.display = "none";
-        document.getElementById("successSection").style.display = "block";
-    })
-    .catch(error => {
-        alert("Terjadi kendala koneksi saat menyimpan order. Silakan coba klik Kirim lagi!");
-        submitBtn.innerText = "Kirim Order";
-        submitBtn.disabled = false;
-        console.error('Error!', error.message);
-    });
-}
-
-function resetForm() {
-    const submitBtn = document.getElementById("submitBtn");
-    submitBtn.innerText = "Kirim Order";
-    submitBtn.disabled = false;
-    document.getElementById("orderForm").reset();
-    document.getElementById("successSection").style.display = "none";
-    document.getElementById("formSection").style.display = "block";
-}
-
-  let currentSlide = 0;
-  const slides = document.querySelectorAll('.slide');
-  const slideInterval = 5000; // Foto berganti setiap 5 detik (5000ms)
-
-  function nextSlide() {
-    // Hapus status aktif dari foto saat ini
-    slides[currentSlide].classList.remove('active');
-    
-    // Pindah ke indeks foto berikutnya
-    currentSlide = (currentSlide + 1) % slides.length;
-    
-    // Aktifkan foto yang baru
-    slides[currentSlide].classList.add('active');
-  }
-
-  // Jalankan fungsi ganti foto secara otomatis sesuai interval waktu
-  setInterval(nextSlide, slideInterval);
-
-    // Logika JavaScript Terintegrasi
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const dots = document.querySelectorAll('.dot');
-    const thumbs = document.querySelectorAll('.thumb-img');
-    const slideInterval = 5000; // Berganti setiap 5 detik
-    let autoSlideTimer;
-
-    // Fungsi utama untuk menampilkan slide berdasarkan indeks
-    function tampilkanSlide(n) {
-        // Hapus kelas active dari semua elemen terlebih dahulu
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        thumbs.forEach(thumb => thumb.classList.remove('active'));
-
-        // Atur posisi indeks agar kembali ke 0 jika melewati batas jumlah foto
-        currentSlide = (n + slides.length) % slides.length;
-
-        // Berikan kelas active pada elemen yang dituju
-        slides[currentSlide].classList.add('active');
-        if(dots[currentSlide]) dots[currentSlide].classList.add('active');
-        if(thumbs[currentSlide]) thumbs[currentSlide].classList.add('active');
-    }
-
-    // Fungsi ganti otomatis ke slide berikutnya
-    function nextSlide() {
-        tampilkanSlide(currentSlide + 1);
-    }
-
-    // Fungsi jika titik atau thumbnail diklik manual oleh pengunjung
-    function gantiFotoManual(n) {
-        tampilkanSlide(n);
-        resetTimer(); // Reset waktu otomatis agar hitungan detik mengulang dari awal
-    }
-
-    // Fungsi menyalakan dan merestart timer otomatis
-    function resetTimer() {
-        clearInterval(autoSlideTimer);
-        autoSlideTimer = setInterval(nextSlide, slideInterval);
-    }
-
-    // Jalankan timer saat halaman pertama kali dibuka
-    resetTimer();
-
-    let currentSlide = 0;
-    const slides = document.querySelectorAll('.slide');
-    const dotContainer = document.getElementById('dynamic-dots');
-    const thumbContainer = document.getElementById('dynamic-thumbs');
-    const slideInterval = 5000; // Berganti otomatis setiap 5 detik
-    let autoSlideTimer;
-
-    // 1. FUNGSI GENERATE TITIK DAN THUMBNAIL OTOMATIS
-    function inisialisasiSlideshow() {
+        // 1. GENERATE TITIK & THUMBNAIL OTOMATIS BERDASARKAN JUMLAH FOTO DI HTML
         slides.forEach((slide, index) => {
-            // Ambil link gambar dari foto utama untuk dipakai di thumbnail
-            const srcGambar = slide.querySelector('img').src;
+            const imgInside = slide.querySelector('img');
+            if (!imgInside) return;
+            const srcGambar = imgInside.getAttribute('src');
 
-            // Buat Element Titik (Dot)
+            // Membuat elemen Titik (Dot)
             const dot = document.createElement('span');
             dot.className = index === 0 ? 'dot active' : 'dot';
             dot.addEventListener('click', () => gantiFotoManual(index));
             dotContainer.appendChild(dot);
 
-            // Buat Element Thumbnail Gambar
+            // Membuat elemen Gambar Kecil (Thumbnail)
             const thumb = document.createElement('img');
             thumb.src = srcGambar;
             thumb.className = index === 0 ? 'thumb-img active' : 'thumb-img';
             thumb.addEventListener('click', () => gantiFotoManual(index));
             thumbContainer.appendChild(thumb);
         });
-    }
 
-    // 2. FUNGSI UNTUK MERUBAH TAMPILAN SLIDE
-    function tampilkanSlide(n) {
-        const dots = document.querySelectorAll('.dot');
-        const thumbs = document.querySelectorAll('.thumb-img');
+        // 2. LOGIKA UTAMA PERPINDAHAN FOTO
+        function tampilkanSlide(n) {
+            const dots = document.querySelectorAll('.dot');
+            const thumbs = document.querySelectorAll('.thumb-img');
 
-        // Reset semua status active
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        thumbs.forEach(thumb => thumb.classList.remove('active'));
+            // Sembunyikan semua elemen aktif terlebih dahulu
+            slides.forEach(slide => slide.classList.remove('active'));
+            if(dots.length) dots.forEach(dot => dot.classList.remove('active'));
+            if(thumbs.length) thumbs.forEach(thumb => thumb.classList.remove('active'));
 
-        // Koreksi urutan index angka
-        currentSlide = (n + slides.length) % slides.length;
+            // Mengatur putaran urutan indeks agar kembali ke awal jika sudah foto terakhir
+            currentSlide = (n + slides.length) % slides.length;
 
-        // Nyalakan elemen yang sedang aktif
-        slides[currentSlide].classList.add('active');
-        if (dots[currentSlide]) dots[currentSlide].classList.add('active');
-        if (thumbs[currentSlide]) thumbs[currentSlide].classList.add('active');
-    }
+            // Aktifkan elemen foto, titik, dan thumbnail sesuai urutan baru
+            slides[currentSlide].classList.add('active');
+            if (dots[currentSlide]) dots[currentSlide].classList.add('active');
+            if (thumbs[currentSlide]) thumbs[currentSlide].classList.add('active');
+        }
 
-    function nextSlide() {
-        tampilkanSlide(currentSlide + 1);
-    }
+        function nextSlide() {
+            tampilkanSlide(currentSlide + 1);
+        }
 
-    function gantiFotoManual(n) {
-        tampilkanSlide(n);
+        function gantiFotoManual(n) {
+            tampilkanSlide(n);
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(autoSlideTimer);
+            autoSlideTimer = setInterval(nextSlide, slideInterval);
+        }
+
+        // Mulai jalankan hitungan otomatis pertama kali
         resetTimer();
-    }
+    });
+</script>
 
-    function resetTimer() {
-        clearInterval(autoSlideTimer);
-        autoSlideTimer = setInterval(nextSlide, slideInterval);
-    }
-
-    // Jalankan pembuatan titik otomatis dan nyalakan timer
-    inisialisasiSlideshow();
-    resetTimer();
-    
-          </script>
 
 <script>
     let currentSlide = 0;
