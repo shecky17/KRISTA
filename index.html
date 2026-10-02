@@ -21,15 +21,22 @@
             overflow: hidden;
         }
         .photo-column {
-            flex: 1;
-            background-color: #fdfdfd;
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-right: 1px solid #eaeaea;
-        }
+    flex: 1; /* Tetap 1 */
+    max-width: 45%; /* Membatasi agar foto tidak terlalu lebar */
+    background-color: #fdfdfd;
+    padding: 20px; /* Dikurangi sedikit dari 30px agar lebih luas */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-right: 1px solid #eaeaea;
+}
+
+.form-column {
+    flex: 1.3; /* Dinaikkan dari 1 agar kolom form mendapatkan porsi ruang lebih besar */
+    padding: 30px;
+}
+
         .main-img {
             width: 100%;
             max-width: 400px;
