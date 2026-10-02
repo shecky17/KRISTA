@@ -20,17 +20,43 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             overflow: hidden;
         }
-        .photo-column {
-    flex: 1; /* Tetap 1 */
-    max-width: 45%; /* Membatasi agar foto tidak terlalu lebar */
-    background-color: #fdfdfd;
-    padding: 20px; /* Dikurangi sedikit dari 30px agar lebih luas */
+       /* Mengatur tata letak kolom kiri agar semua elemennya tersusun rapi ke bawah */
+.photo-column {
+    flex: 1.1;
+    max-width: 48%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-right: 1px solid #eaeaea;
+    align-items: center; /* Membuat foto utama, titik, dan thumbnail otomatis di tengah */
+    justify-content: flex-start;
+    padding: 20px;
 }
+
+/* Mengatur wadah foto kecil agar berjejer horizontal dan pas di bawah foto besar */
+#dynamic-thumbs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px; /* Memberi jarak tipis di bawah foto utama/titik */
+    width: 100%;
+    max-width: 400px; /* Sesuaikan dengan lebar maksimal foto besar Anda */
+}
+
+/* Mengatur ukuran masing-masing foto kecil */
+#dynamic-thumbs img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s ease;
+}
+
+/* Efek saat foto kecil aktif atau diklik */
+#dynamic-thumbs img.active {
+    border-color: #ff9800; /* Garis tepi oranye pembatas */
+}
+
 
 .form-column {
     flex: 1.3; /* Dinaikkan dari 1 agar kolom form mendapatkan porsi ruang lebih besar */
@@ -296,32 +322,24 @@
 </head>
 <body>
 
-<div class="split-container">
-    
-    <!-- KOLOM KIRI: SLIDESHOW PRODUK -->
-<div class="slideshow-container">
-    <!-- AREA SLIDE FOTO UTAMA -->
-    <div class="slide active">
+<div class="photo-column">
+    <!-- 1. Kontainer Utama Slideshow Foto Besar -->
+    <div class="slideshow-container">
+        <div class="slide active">
         <img src="dimsum1.jpg" alt="Foto 1">
     </div>
-    <div class="slide">
-        <img src="dimsum2.png" alt="Foto 2">
-    </div>
+    <!-- 2. Kontainer Titik Indikator (Tepat di bawah foto besar) -->
+    <div id="dynamic-dots" class="dots-container"></div>
 
-    <!-- TANDA TITIK INDIKATOR (Melayang di atas foto utama) -->
-    <div class="dot-container" id="dynamic-dots"></div>
-</div> <!-- ⚠️ TAG PENUTUP SLIDESHOW-CONTAINER HARUS DI SINI -->
+    <!-- 3. Kontainer Foto Kecil/Thumbnail (Pindahkan ke sini jika sebelumnya di luar) -->
+    <div id="dynamic-thumbs" class="thumbs-container"></div>
+</div>
 
-<!-- AREA THUMBNAIL (Wajib berada di LUAR container agar tercetak di bawah foto) -->
-<div class="thumbnail-row" id="dynamic-thumbs"></div>
-
-
-      <!-- KOLOM KANAN: FORM ORDER / RINGKASAN SUKSES -->
-    <div class="form-column">
-        
-        <!-- BLOK FORM UTAMA -->
-        <div id="formSection">
-            <h2>Form Pemesanan Produk</h2>
+<div class="form-column">
+    <!-- Form Pemesanan Produk Anda -->
+    <h2>Form Pemesanan Produk</h2>
+    <!-- ... isi form ... -->
+    
             <!-- Perbaikan Utama: Mengubah button tipe menjadi button biasa untuk menghindari auto-reload -->
             <form id="orderForm" onsubmit="return false;">
                 <div class="form-group">
