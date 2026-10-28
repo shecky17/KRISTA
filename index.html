@@ -49,13 +49,23 @@ section{margin:28px 0}
 .total{display:flex;justify-content:space-between;font-weight:800;font-size:1.15rem;padding-top:10px;color:var(--maroon)}
 .bar{position:fixed;left:0;right:0;bottom:0;background:var(--maroon);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:3px solid var(--gold);z-index:5;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
 .bar b{font-size:1.1rem}
-.btn{border:0;border-radius:999px;padding:12px 22px;font:700 1rem 'Nunito Sans',sans-serif;cursor:pointer;background:#25d366;color:#063b1b}
+.btn{border:0;border-radius:999px;padding:12px 22px;font:700 1rem 'Nunito Sans',sans-serif;cursor:pointer;background:var(--red);color:#fff;text-decoration:none;display:inline-block;text-align:center}
+.bar .btn{background:var(--gold);color:#2b0d14}
 .btn.alt{background:transparent;color:var(--maroon);border:1.5px solid var(--maroon)}
-.btn[disabled]{opacity:.5;cursor:not-allowed}
+.btn[disabled]{opacity:.6;cursor:wait}
 .actions{display:flex;gap:10px;flex-wrap:wrap}
 .err{color:#b3001b;font-size:.9rem;min-height:1.2em;margin:0}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;font-family:'Fraunces',serif}
-@media(prefers-color-scheme:dark){:root{--cream:#2a1114;--card:#3a1a1f;--ink:#fbeee0;--mute:#d3b4a6;--line:#5b2d34}.item.on{background:#4d1d27}.ico{background:#552830}.form input,.form textarea,.form select{background:#2a1114}.btn.alt{color:#f3d9a0;border-color:#f3d9a0}.sec-h h2,.total{color:#f3d9a0}.price{color:#ff8a9c}}
+.thx{position:fixed;inset:0;background:rgba(40,10,18,.75);display:none;place-items:center;padding:20px;z-index:20;overflow:auto}
+.thx.show{display:grid}
+.thx .box{background:var(--card);border-radius:18px;max-width:440px;width:100%;padding:28px 22px;text-align:center;border-top:6px solid var(--gold)}
+.thx .ok{font-size:3rem;line-height:1}
+.thx h2{color:var(--maroon);font-size:1.7rem;margin:10px 0 6px}
+.thx p{margin:6px 0}
+.thx .info{background:#fff0ee;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:14px 0;font-size:.92rem;text-align:left}
+.thx .actions{justify-content:center;margin-top:16px}
+@media(prefers-color-scheme:dark){:root{--cream:#2a1114;--card:#3a1a1f;--ink:#fbeee0;--mute:#d3b4a6;--line:#5b2d34}.item.on{background:#4d1d27}.ico{background:#552830}.form input,.form textarea,.form select{background:#2a1114}.btn.alt{color:#f3d9a0;border-color:#f3d9a0}.sec-h h2,.total,.thx h2{color:#f3d9a0}.price{color:#ff8a9c}.thx .info{background:#4d1d27}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -68,7 +78,7 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
 
 <main class="wrap">
   <div class="notice">
-    <b>Cara pesan:</b> pilih produk, isi data diri, lalu tekan <b>Kirim lewat WhatsApp</b>. Kami konfirmasi stok dan pembayaran, lalu pesanan diambil sesuai jadwal yang disepakati. Ketersediaan produk dikonfirmasi saat pemesanan.
+    <b>Cara pesan:</b> pilih produk, isi data diri, lalu tekan <b>Kirim Pesanan</b>. Pesananmu langsung masuk ke kami. Kami akan menghubungi nomor WhatsApp kamu untuk konfirmasi stok dan pembayaran.
   </div>
 
   <section>
@@ -94,6 +104,7 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
       </div>
       <label>Lokasi kantor / alamat<input id="alamat" autocomplete="street-address" placeholder="Nama kantor, lantai, atau alamat"></label>
       <label>Catatan (opsional)<textarea id="catatan" rows="2" placeholder="Contoh: sambal tidak terlalu pedas"></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Jangan diisi<input id="website" tabindex="-1" autocomplete="off"></label></div>
     </div>
   </section>
 
@@ -104,8 +115,7 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
       <div class="total"><span>Total</span><span id="total">Rp0</span></div>
       <p class="err" id="err" role="alert"></p>
       <div class="actions">
-        <button class="btn" id="send">Kirim lewat WhatsApp</button>
-        <button class="btn alt" id="copy">Salin pesanan</button>
+        <button class="btn" id="send">Kirim Pesanan</button>
       </div>
     </div>
   </section>
@@ -113,11 +123,21 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
 
 <footer>Good Things Worth Sharing.</footer>
 
-<div class="bar"><div><span id="cnt">0 item</span><br><b id="total2">Rp0</b></div><a href="#ringkas" id="goto" style="display:none"></a><button class="btn" id="jump">Lihat pesanan</button></div>
+<div class="bar"><div><span id="cnt">0 item</span><br><b id="total2">Rp0</b></div><button class="btn" id="jump">Lihat pesanan</button></div>
+
+<div class="thx" id="thx" role="dialog" aria-modal="true" aria-labelledby="thxTitle">
+  <div class="box">
+    <div class="ok" aria-hidden="true">✅</div>
+    <h2 id="thxTitle">Terima kasih sudah order!</h2>
+    <p>Pesanan <b id="thxId"></b> atas nama <b id="thxNama"></b> senilai <b id="thxTotal"></b> sudah kami terima.</p>
+    <div class="info">Kami akan menghubungi kamu lewat WhatsApp untuk konfirmasi stok dan pembayaran. Simpan nomor pesanan di atas untuk referensi.</div>
+    <div class="actions"><button class="btn" id="redo">Pesan lagi</button></div>
+  </div>
+</div>
 
 <script>
-// GANTI nomor WhatsApp usaha (format 62, tanpa + dan tanpa 0 di depan)
-const WA_NUMBER = "6285876712482";
+// GANTI dengan Web app URL dari Google Apps Script (berakhiran /exec)
+const SCRIPT_URL = https://script.google.com/macros/s/AKfycbwfx29pWS6GNbhKrS3O6XYHgKtAa5w-xea8UyD2KGw3gvAELWKgqijVDj_qDqbtXlb-/exec;
 
 const SAMBAL = [
   {id:"cumi-s",n:"Sambal Cumi · Pedas Sedang",p:60000,i:"🦑",pete:1},
@@ -162,40 +182,58 @@ document.addEventListener("change",e=>{
 function lines(){
   return all.filter(x=>qty[x.id]>0).map(x=>({x,q:qty[x.id],sub:qty[x.id]*x.p,pete:x.pete&&pete[x.id]}));
 }
+function totalNum(){return lines().reduce((a,l)=>a+l.sub,0);}
 function update(){
-  const L=lines();let tot=0,c=0;
+  const L=lines();let c=0;
   all.forEach(x=>{
     document.getElementById("q-"+x.id).textContent=qty[x.id];
     document.getElementById("c-"+x.id).classList.toggle("on",qty[x.id]>0);
   });
-  L.forEach(l=>{tot+=l.sub;c+=l.q});
+  L.forEach(l=>c+=l.q);
   sum.innerHTML=L.length?L.map(l=>`<li><span>${l.q}× ${l.x.n}${l.pete?" (+pete)":""}</span><span>${rp(l.sub)}</span></li>`).join(""):'<li class="empty">Belum ada produk dipilih</li>';
-  total.textContent=total2.textContent=rp(tot);
+  total.textContent=total2.textContent=rp(totalNum());
   cnt.textContent=c+" item";
+}
+function orderId(){
+  const d=new Date(),p=n=>String(n).padStart(2,"0");
+  return "KF-"+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+"-"+Math.random().toString(36).slice(2,6).toUpperCase();
 }
 function build(){
   const L=lines(),g=id=>document.getElementById(id).value.trim();
   if(!L.length)return {e:"Pilih minimal satu produk dulu ya."};
   if(!g("nama"))return {e:"Isi nama lengkap."};
-  if(!g("hp"))return {e:"Isi nomor WhatsApp."};
-  let t="Halo KRISTA FOOD, saya mau pesan:\n\n";
-  L.forEach(l=>t+=`• ${l.q}× ${l.x.n}${l.pete?" (tambah pete)":""} = ${rp(l.sub)}\n`);
-  t+=`\nTotal: ${total.textContent}\n\nNama: ${g("nama")}\nWA: ${g("hp")}\nPenerimaan: ${metode.value}`;
-  if(g("alamat"))t+=`\nLokasi: ${g("alamat")}`;
-  if(tgl.value)t+=`\nTanggal diinginkan: ${tgl.value}`;
-  if(g("catatan"))t+=`\nCatatan: ${g("catatan")}`;
-  return {t};
+  if(g("hp").replace(/\D/g,"").length<9)return {e:"Isi nomor WhatsApp yang benar."};
+  return {d:{
+    id:orderId(),nama:g("nama"),hp:g("hp"),metode:metode.value,tgl:tgl.value,
+    alamat:g("alamat"),catatan:g("catatan"),website:g("website"),total:totalNum(),
+    items:L.map(l=>`${l.q}x ${l.x.n}${l.pete?" (tambah pete)":""} = ${rp(l.sub)}`).join("\n")
+  }};
 }
-send.onclick=()=>{
+function resetAll(){
+  all.forEach(x=>{qty[x.id]=0;pete[x.id]=false;});
+  document.querySelectorAll("[data-pete]").forEach(c=>c.checked=false);
+  ["nama","hp","alamat","catatan","tgl","website"].forEach(i=>document.getElementById(i).value="");
+  metode.selectedIndex=0;err.textContent="";update();
+}
+function closeThx(){thx.classList.remove("show");}
+
+send.onclick=async()=>{
   const r=build();err.textContent=r.e||"";if(r.e)return;
-  if(WA_NUMBER.includes("X")){err.textContent="Nomor WhatsApp usaha belum diatur di file index.html (WA_NUMBER).";return;}
-  window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(r.t),"_blank");
+  if(SCRIPT_URL.includes("GANTI")){err.textContent="SCRIPT_URL belum diisi di file index.html.";return;}
+  send.disabled=true;send.textContent="Mengirim...";
+  try{
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(r.d)});
+    thxId.textContent=r.d.id;thxNama.textContent=r.d.nama;thxTotal.textContent=rp(r.d.total);
+    thx.classList.add("show");redo.focus();
+  }catch(_){
+    err.textContent="Pesanan belum terkirim. Periksa koneksi internet, lalu tekan Kirim Pesanan lagi.";
+  }finally{
+    send.disabled=false;send.textContent="Kirim Pesanan";
+  }
 };
-copy.onclick=async()=>{
-  const r=build();err.textContent=r.e||"";if(r.e)return;
-  try{await navigator.clipboard.writeText(r.t);err.textContent="Pesanan disalin. Tempel di chat WhatsApp kami.";}
-  catch(_){err.textContent="Gagal menyalin. Gunakan tombol Kirim lewat WhatsApp.";}
-};
+redo.onclick=()=>{closeThx();resetAll();window.scrollTo({top:0,behavior:"smooth"});};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeThx();});
 jump.onclick=()=>sum.scrollIntoView({behavior:"smooth",block:"center"});
 tgl.min=new Date().toISOString().slice(0,10);
 update();
