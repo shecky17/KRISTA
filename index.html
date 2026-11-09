@@ -24,6 +24,7 @@ section{margin:28px 0}
 .sec-h span{color:var(--mute);font-size:.9rem}
 .sub{color:var(--maroon);font-size:1.2rem;margin:20px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--line)}
 .sub small{font-family:'Nunito Sans',system-ui,sans-serif;font-weight:600;color:var(--mute);font-size:.85rem;margin-left:6px}
+.badge{display:inline-block;background:var(--maroon);color:#f3d9a0;border:1px solid var(--gold);border-radius:999px;padding:2px 12px;font:700 .78rem 'Nunito Sans',system-ui,sans-serif;letter-spacing:.03em;vertical-align:middle;margin-left:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
 .item{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s,background .2s}
 .item.on{border-color:var(--red);background:#fff0ee}
@@ -45,6 +46,7 @@ section{margin:28px 0}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:560px){.cols{grid-template-columns:1fr}}
 .note{background:#fff0ee;border:1px solid var(--line);border-left:5px solid var(--gold);border-radius:10px;padding:10px 14px;font-size:.9rem}
+.sec-note{margin-bottom:12px}
 :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .sum{list-style:none;margin:0;padding:0}
 .sum li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:.94rem}
@@ -97,6 +99,12 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
     <div class="grid" id="savory"></div>
     <h3 class="sub">🍰 Sweet Picks <small>Camilan Manis Pilihan</small></h3>
     <div class="grid" id="banana"></div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>Cookies Collection <span class="badge">⭐ LIMITED · PO</span></h2><span>Aneka Kue Kering Pilihan</span></div>
+    <div class="note sec-note">🎄 <b>Produk terbatas dengan sistem Pre-Order (PO).</b> Cocok untuk camilan di rumah, persiapan Natal, Tahun Baru, dan Lebaran. Ketersediaan dan jadwal antar/ambil kami konfirmasi lewat WhatsApp.</div>
+    <div class="grid" id="cookies"></div>
   </section>
 
   <section>
@@ -170,9 +178,19 @@ const BANANA = [
   ["pk","Piscok Keju","10 pcs","🧀"],["pgw","Pisang Goreng Wijen","15 pcs","🍌"],
   ["mo","Molen Original","10 pcs","🥐"],["mc","Molen Cokelat","10 pcs","🍫"]
 ].map(mk);
+// Cookies (limited, PO): u = satuan harga
+const COOKIES = [
+  {id:"kk-o",n:"Kue Kacang Original",p:28000,i:"🥜",meta:"Toples 600 ml",u:"toples"},
+  {id:"kk-i",n:"Kue Kacang Ijo",p:30000,i:"🍵",meta:"Toples 600 ml",u:"toples"},
+  {id:"kk-p",n:"Kue Kacang Premium",p:35000,i:"🥜",meta:"Toples 1000 ml",u:"toples"},
+  {id:"ksk",n:"Kue Sagu Keju",p:35000,i:"🧀",meta:"Toples 600 ml",u:"toples"},
+  {id:"kk-cm",n:"Kue Kacang Coklat Mede",p:35000,i:"🍫",meta:"Toples 600 ml",u:"toples"},
+  {id:"semprit",n:"Kue Semprit",p:37000,i:"🌼",meta:"500 gr",u:"pack"},
+  {id:"lk",n:"Lidah Kucing Original",p:38000,i:"🍪",meta:"500 gr",u:"pack"}
+];
 
 const rp=n=>"Rp"+n.toLocaleString("id-ID");
-const all=[...SAMBAL,...SAVORY,...BANANA];
+const all=[...SAMBAL,...SAVORY,...BANANA,...COOKIES];
 const qty={},pete={};
 all.forEach(x=>qty[x.id]=0);
 
@@ -181,13 +199,14 @@ function card(x){
   d.className="item";d.id="c-"+x.id;
   d.innerHTML=`<div class="top"><div class="ico" aria-hidden="true">${x.i}</div><div><h3>${x.n}</h3><div class="meta">${x.meta||"Netto 200 ml"}</div></div></div>
   ${x.pete?`<label class="pete"><input type="checkbox" data-pete="${x.id}"> Tambah pete (harga sama)</label>`:""}
-  <div class="row"><span class="price">${rp(x.p)}<small class="meta"> / ${x.pete?"botol":"pack"}</small></span>
+  <div class="row"><span class="price">${rp(x.p)}<small class="meta"> / ${x.u||(x.pete?"botol":"pack")}</small></span>
   <div class="step"><button type="button" data-d="-1" data-id="${x.id}" aria-label="Kurangi ${x.n}">−</button><output id="q-${x.id}">0</output><button type="button" data-d="1" data-id="${x.id}" aria-label="Tambah ${x.n}">+</button></div></div>`;
   return d;
 }
 SAMBAL.forEach(x=>sambal.append(card(x)));
 SAVORY.forEach(x=>savory.append(card(x)));
 BANANA.forEach(x=>banana.append(card(x)));
+COOKIES.forEach(x=>cookies.append(card(x)));
 
 document.addEventListener("click",e=>{
   const b=e.target.closest("[data-d]");if(!b)return;
