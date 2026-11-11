@@ -74,6 +74,26 @@ footer{text-align:center;color:var(--mute);font-style:italic;padding:24px 16px;f
 .thx .actions{justify-content:center;margin-top:16px}
 @media(prefers-color-scheme:dark){:root{--cream:#2a1114;--card:#3a1a1f;--ink:#fbeee0;--mute:#d3b4a6;--line:#5b2d34}.item.on{background:#4d1d27}.ico{background:#552830}.form input,.form textarea,.form select{background:#2a1114}.btn.alt{color:#f3d9a0;border-color:#f3d9a0}.sec-h h2,.total,.thx h2,.sub{color:#f3d9a0}.price{color:#ff8a9c}.thx .info,.note{background:#4d1d27}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* ===== Tampilan lebih lega per kategori ===== */
+section{margin:56px 0}
+section + section{padding-top:40px;border-top:2px dashed var(--line)}
+.sec-h{margin-bottom:20px;padding-bottom:10px;border-bottom:3px solid var(--gold)}
+.sec-h h2{font-size:1.8rem}
+.sec-h span{font-size:.95rem}
+.sub{margin:36px 0 16px;font-size:1.3rem}
+.grid{gap:18px}
+.item{padding:18px;gap:12px}
+.item h3{font-size:1.08rem}
+.meta{font-size:.92rem}
+.sec-note{margin-bottom:20px}
+.notice{margin:28px 0}
+.form{padding:22px;gap:18px}
+@media(max-width:560px){
+  section{margin:40px 0}
+  section + section{padding-top:28px}
+  .grid{gap:14px}
+}
 </style>
 </head>
 <body>
