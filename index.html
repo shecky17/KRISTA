@@ -94,6 +94,10 @@ section + section{padding-top:40px;border-top:2px dashed var(--line)}
   section + section{padding-top:28px}
   .grid{gap:14px}
 }
+
+/* ===== Foto produk ===== */
+.ph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#fbe7cf;display:block}
+.item.has-ph .ico{display:none}
 </style>
 </head>
 <body>
@@ -184,8 +188,8 @@ const SAMBAL = [
   {id:"teri",n:"Sambal Teri",p:60000,i:"🐟",pete:1},
   {id:"rebon",n:"Sambal Udang Rebon",p:45000,i:"🦐",pete:1}
 ];
-// [id, nama, isi, emoji]
-const mk=a=>({id:a[0],n:a[1],p:24000,i:a[3],meta:"Isi "+a[2]});
+// [id, nama, isi, emoji, (opsional) daftar nama file foto]
+const mk=a=>({id:a[0],n:a[1],p:24000,i:a[3],meta:"Isi "+a[2],img:a[4]||null});
 const SAVORY = [
   ["dgk","Dimsum Goreng Keju","4 pcs","🥟"],["dk","Dimsum Kukus","7 pcs","🥟"],
   ["ar","Ayam Rambutan","7 pcs","🍗"],["ea","Ekado Ayam","7 pcs","🥠"],
@@ -198,21 +202,40 @@ const BANANA = [
   ["pk","Piscok Keju","10 pcs","🧀"],["pgw","Pisang Goreng Wijen","15 pcs","🍌"],
   ["mo","Molen Original","10 pcs","🥐"],["mc","Molen Cokelat","10 pcs","🍫"]
 ].map(mk);
-// Cookies (limited, PO): u = satuan harga
+// Cookies (limited, PO). img = daftar nama file foto di repository (dicoba berurutan sampai ada yang berhasil)
 const COOKIES = [
-  {id:"kk-o",n:"Kue Kacang Original",p:30000,i:"🥜",meta:"Toples 600 ml",u:"toples"},
-  {id:"kk-i",n:"Kue Kacang Ijo",p:32000,i:"🍵",meta:"Toples 600 ml",u:"toples"},
-  {id:"kk-p",n:"Kue Kacang Premium",p:40000,i:"🥜",meta:"Toples 1000 ml",u:"toples"},
-  {id:"ksk",n:"Kue Sagu Keju",p:38000,i:"🧀",meta:"Toples 600 ml",u:"toples"},
-  {id:"kk-cm",n:"Kue Kacang Coklat Mede",p:38000,i:"🍫",meta:"Toples 600 ml",u:"toples"},
-  {id:"semprit",n:"Kue Semprit",p:40000,i:"🌼",meta:"500 gr",u:"pack"},
-  {id:"lk",n:"Lidah Kucing Original",p:42000,i:"🍪",meta:"500 gr",u:"pack"}
+  {id:"kk-o",n:"Kue Kacang Original",p:30000,i:"🥜",meta:"Toples 600 ml",u:"toples",
+    img:["KacangOri.jpeg"]},
+  {id:"kk-i",n:"Kue Kacang Ijo",p:32000,i:"🍵",meta:"Toples 600 ml",u:"toples",
+    img:["KacangIjo.jpeg","Kacangljo.jpeg"]},
+  {id:"kk-p",n:"Kue Kacang Premium",p:40000,i:"🥜",meta:"Toples 1000 ml",u:"toples",
+    img:["KacangPremium.jpeg"]},
+  {id:"ksk",n:"Kue Sagu Keju",p:38000,i:"🧀",meta:"Toples 600 ml",u:"toples",
+    img:["SaguKeju.jpeg"]},
+  {id:"kk-cm",n:"Kue Kacang Coklat Mede",p:38000,i:"🍫",meta:"Toples 600 ml",u:"toples",
+    img:["KacangColatMede.jpeg","KacangCoklatMede.jpeg"]},
+  {id:"semprit",n:"Kue Semprit",p:40000,i:"🌼",meta:"500 gr",u:"pack",
+    img:["Semprit.jpeg"]},
+  {id:"lk",n:"Lidah Kucing Original",p:42000,i:"🍪",meta:"500 gr",u:"pack",
+    img:["LidangKucingOri.jpeg","LidahKucingOri.jpeg"]}
 ];
 
 const rp=n=>"Rp"+n.toLocaleString("id-ID");
 const all=[...SAMBAL,...SAVORY,...BANANA,...COOKIES];
 const qty={},pete={};
 all.forEach(x=>qty[x.id]=0);
+
+// Pasang foto: coba nama file satu per satu; kalau semuanya gagal, emoji tetap tampil
+function setFoto(card,x){
+  if(!x.img||!x.img.length)return;
+  const im=document.createElement("img");
+  im.className="ph";im.alt=x.n;im.loading="lazy";im.decoding="async";
+  let k=0;
+  im.onload=()=>card.classList.add("has-ph");
+  im.onerror=()=>{k++;if(k<x.img.length){im.src=x.img[k];}else{im.remove();}};
+  im.src=x.img[0];
+  card.prepend(im);
+}
 
 function card(x){
   const d=document.createElement("div");
@@ -221,6 +244,7 @@ function card(x){
   ${x.pete?`<label class="pete"><input type="checkbox" data-pete="${x.id}"> Tambah pete (harga sama)</label>`:""}
   <div class="row"><span class="price">${rp(x.p)}<small class="meta"> / ${x.u||(x.pete?"botol":"pack")}</small></span>
   <div class="step"><button type="button" data-d="-1" data-id="${x.id}" aria-label="Kurangi ${x.n}">−</button><output id="q-${x.id}">0</output><button type="button" data-d="1" data-id="${x.id}" aria-label="Tambah ${x.n}">+</button></div></div>`;
+  setFoto(d,x);
   return d;
 }
 SAMBAL.forEach(x=>sambal.append(card(x)));
