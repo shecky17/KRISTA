@@ -182,36 +182,37 @@ section + section{padding-top:40px;border-top:2px dashed var(--line)}
 // Web app URL dari Google Apps Script (berakhiran /exec)
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsf7w9INSVPCmWCSSAf4Z0743-onUEUJG-K2A75ReQZTY4Ec9QSpuoUKPTcL0YHVTL/exec";
 
+// img = daftar nama file foto di repository (dicoba berurutan sampai ada yang berhasil)
 const SAMBAL = [
-  {id:"cumi-s",n:"Sambal Cumi · Pedas Sedang",p:60000,i:"🦑",pete:1},
-  {id:"cumi-b",n:"Sambal Cumi · Pedas Banget",p:65000,i:"🌶️",pete:1},
-  {id:"teri",n:"Sambal Teri",p:65000,i:"🐟",pete:1},
-  {id:"rebon",n:"Sambal Udang Rebon",p:50000,i:"🦐",pete:1}
+  {id:"cumi-s",n:"Sambal Cumi · Pedas Sedang",p:60000,i:"🦑",pete:1,img:["SambalCumi.jpeg"]},
+  {id:"cumi-b",n:"Sambal Cumi · Pedas Banget",p:65000,i:"🌶️",pete:1,img:["SambalCumi.jpeg"]},
+  {id:"teri",n:"Sambal Teri",p:65000,i:"🐟",pete:1,img:["SambalTeri.jpeg"]},
+  {id:"rebon",n:"Sambal Udang Rebon",p:50000,i:"🦐",pete:1,img:["SambalUdangRebon.jpeg"]}
 ];
-// [id, nama, isi, emoji, harga, (opsional) daftar nama file foto]
+// [id, nama, isi, emoji, harga, daftar nama file foto]
 const mk=a=>({id:a[0],n:a[1],p:a[4],i:a[3],meta:"Isi "+a[2],img:a[5]||null});
 const SAVORY = [
-  ["dgk","Dimsum Goreng Keju","4 pcs","🥟",32000],
-  ["dk","Dimsum Kukus","7 pcs","🥟",32000],
-  ["ar","Ayam Rambutan","7 pcs","🍗",32000],
-  ["ea","Ekado Ayam","7 pcs","🥠",32000],
-  ["akg","Ayam Keju Gacoan","5 pcs","🧀",30000],
-  ["oob","Otak-Otak Bojot + Bumbu","50 pcs","🍢",26000],
-  ["ca","Cimol Ayam + Bumbu","50 pcs","🍡",26000],
-  ["cmc","Cilok Mozzarella Crispy","12 pcs","🧆",25000],
-  ["co","Cilok Original","20 pcs","🍡",18000]
+  ["dgk","Dimsum Goreng Keju","4 pcs","🥟",32000,["DimsumGorengKeju.jpeg"]],
+  ["dk","Dimsum Kukus","7 pcs","🥟",32000,["DimsumKukus.jpeg"]],
+  ["ar","Ayam Rambutan","7 pcs","🍗",32000,["AyamRambutan.jpeg"]],
+  ["ea","Ekado Ayam","7 pcs","🥠",32000,["EkadoAyam.jpeg"]],
+  ["akg","Ayam Keju Gacoan","5 pcs","🧀",30000,["AyamKejuGacoan.jpeg"]],
+  ["oob","Otak-Otak Bojot + Bumbu","50 pcs","🍢",26000,["OtakOtakBojot.jpeg"]],
+  ["ca","Cimol Ayam + Bumbu","50 pcs","🍡",26000,["CimolAyam.jpeg"]],
+  ["cmc","Cilok Mozzarella Crispy","12 pcs","🧆",25000,["CilokMozarelaCrispy.jpeg","CilokMozzarellaCrispy.jpeg"]],
+  ["co","Cilok Original","20 pcs","🍡",18000,["CilokOriginal.jpeg"]]
 ].map(mk);
 const BANANA = [
-  ["pm","Piscok Milo","10 pcs","🍌",28000],
-  ["pmz","Piscok Mozzarella","10 pcs","🍌",30000],
-  ["nl","Nangka Lumer","10 pcs","🍈",27000],
-  ["dl","Durian Lumer","8 pcs","🍈",29000],
-  ["pk","Piscok Keju","10 pcs","🧀",27000],
-  ["pgw","Pisang Goreng Wijen","15 pcs","🍌",28000],
-  ["mo","Molen Original","10 pcs","🥐",30000],
-  ["mc","Molen Cokelat","10 pcs","🍫",32000]
+  ["pm","Piscok Milo","10 pcs","🍌",28000,["PiscokMilo.jpeg"]],
+  ["pmz","Piscok Mozzarella","10 pcs","🍌",30000,["PiscokMozarela.jpeg","PiscokMozzarella.jpeg"]],
+  ["nl","Nangka Lumer","10 pcs","🍈",27000,["NangkaLumer.jpeg"]],
+  ["dl","Durian Lumer","8 pcs","🍈",29000,["DurianLumer.jpeg"]],
+  ["pk","Piscok Keju","10 pcs","🧀",27000,["PiscokKeju.jpeg"]],
+  ["pgw","Pisang Goreng Wijen","15 pcs","🍌",28000,["PisangGorengWijen.jpeg"]],
+  ["mo","Molen Original","10 pcs","🥐",30000,["MolenOriginal.jpeg"]],
+  ["mc","Molen Cokelat","10 pcs","🍫",32000,["MolenCokelat.jpeg"]]
 ].map(mk);
-// Cookies (limited, PO). img = daftar nama file foto di repository (dicoba berurutan sampai ada yang berhasil)
+// Cookies (limited, PO)
 const COOKIES = [
   {id:"kk-o",n:"Kue Kacang Original",p:35000,i:"🥜",meta:"Toples 600 ml",u:"toples",
     img:["KacangOri.jpeg"]},
@@ -222,11 +223,13 @@ const COOKIES = [
   {id:"ksk",n:"Kue Sagu Keju",p:45000,i:"🧀",meta:"Toples 600 ml",u:"toples",
     img:["SaguKeju.jpeg"]},
   {id:"kk-cm",n:"Kue Kacang Coklat Mede",p:45000,i:"🍫",meta:"Toples 600 ml",u:"toples",
-    img:["KacangColatMede.jpeg","KacangCoklatMede.jpeg"]},
+    img:["KacangCoklatMede.jpeg","KacangColatMede.jpeg"]},
   {id:"semprit",n:"Kue Semprit",p:47000,i:"🌼",meta:"500 gr",u:"pack",
     img:["Semprit.jpeg"]},
-  {id:"lk",n:"Lidah Kucing Original",p:47000,i:"🍪",meta:"500 gr",u:"pack",
-    img:["LidangKucingOri.jpeg","LidahKucingOri.jpeg"]}
+  {id:"lk",n:"Kue Lidah Kucing Original",p:47000,i:"🍪",meta:"500 gr",u:"pack",
+    img:["LidangKucingOri.jpeg","LidahKucingOri.jpeg"]},
+  {id:"lkr",n:"Kue Lidah Kucing Rainbow",p:50000,i:"🌈",meta:"Toples 1000 ml · Varian warna spesial",u:"toples",
+    img:["LidahKucingRainbow.jpeg"]}
 ];
 
 const rp=n=>"Rp"+n.toLocaleString("id-ID");
