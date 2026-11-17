@@ -139,4 +139,193 @@ section + section{padding-top:40px;border-top:2px dashed var(--line)}
         <label>Nomor WhatsApp<input id="hp" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xxxxxxxxxx"></label>
       </div>
       <label>Metode terima<select id="metode"><option>Diantar ke kantor</option><option>Ambil sendiri</option></select></label>
-      <div class="note">📅 <b>Jadwal antar/ambil</b> menyesuaikan ketersediaan stok. Kami akan menginformasikannya lewat WhatsApp setelah pesananmu
+      <div class="note">📅 <b>Jadwal antar/ambil</b> menyesuaikan ketersediaan stok. Kami akan menginformasikannya lewat WhatsApp setelah pesananmu dikonfirmasi.</div>
+      <label>Lokasi kantor / alamat<input id="alamat" autocomplete="street-address" placeholder="Nama kantor, lantai, atau alamat"></label>
+      <label>Catatan (opsional)<textarea id="catatan" rows="2" placeholder="Contoh: sambal tidak terlalu pedas"></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Jangan diisi<input id="website" tabindex="-1" autocomplete="off"></label></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-h"><h2>Ringkasan pesanan</h2></div>
+    <div class="form">
+      <ul class="sum" id="sum"></ul>
+      <div class="total"><span>Total</span><span id="total">Rp0</span></div>
+      <div class="note">💳 <b>Pembayaran:</b> transfer dilakukan <b>setelah pesanan sudah sampai di tanganmu</b>. Informasi nominal dan rekening akan kami kirim lewat WhatsApp.</div>
+      <p class="err" id="err" role="alert"></p>
+      <div class="actions">
+        <button class="btn" id="send">Kirim Pesanan</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>Good Things Worth Sharing.</footer>
+
+<div class="bar"><div><span id="cnt">0 item</span><br><b id="total2">Rp0</b></div><button class="btn" id="jump">Lihat pesanan</button></div>
+
+<div class="thx" id="thx" role="dialog" aria-modal="true" aria-labelledby="thxTitle">
+  <div class="box">
+    <div class="ok" aria-hidden="true">✅</div>
+    <h2 id="thxTitle">Terima kasih sudah order!</h2>
+    <p>Pesanan <b id="thxId"></b> atas nama <b id="thxNama"></b> senilai <b id="thxTotal"></b> sudah kami terima.</p>
+    <div class="info">
+      <p>📲 Kami akan menghubungi kamu lewat WhatsApp untuk konfirmasi stok dan menginformasikan jadwal antar/ambil.</p>
+      <p>💳 <b>Pembayaran via transfer dilakukan setelah pesanan sampai di tanganmu</b>, dan infonya kami kirim lewat WhatsApp.</p>
+      <p>Simpan nomor pesanan di atas untuk referensi.</p>
+    </div>
+    <div class="actions"><button class="btn" id="redo">Pesan lagi</button></div>
+  </div>
+</div>
+
+<script>
+// Web app URL dari Google Apps Script (berakhiran /exec)
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsf7w9INSVPCmWCSSAf4Z0743-onUEUJG-K2A75ReQZTY4Ec9QSpuoUKPTcL0YHVTL/exec";
+
+const SAMBAL = [
+  {id:"cumi-s",n:"Sambal Cumi · Pedas Sedang",p:60000,i:"🦑",pete:1},
+  {id:"cumi-b",n:"Sambal Cumi · Pedas Banget",p:65000,i:"🌶️",pete:1},
+  {id:"teri",n:"Sambal Teri",p:65000,i:"🐟",pete:1},
+  {id:"rebon",n:"Sambal Udang Rebon",p:50000,i:"🦐",pete:1}
+];
+// [id, nama, isi, emoji, harga, (opsional) daftar nama file foto]
+const mk=a=>({id:a[0],n:a[1],p:a[4],i:a[3],meta:"Isi "+a[2],img:a[5]||null});
+const SAVORY = [
+  ["dgk","Dimsum Goreng Keju","4 pcs","🥟",32000],
+  ["dk","Dimsum Kukus","7 pcs","🥟",32000],
+  ["ar","Ayam Rambutan","7 pcs","🍗",32000],
+  ["ea","Ekado Ayam","7 pcs","🥠",32000],
+  ["akg","Ayam Keju Gacoan","5 pcs","🧀",30000],
+  ["oob","Otak-Otak Bojot + Bumbu","50 pcs","🍢",26000],
+  ["ca","Cimol Ayam + Bumbu","50 pcs","🍡",26000],
+  ["cmc","Cilok Mozzarella Crispy","12 pcs","🧆",25000],
+  ["co","Cilok Original","20 pcs","🍡",18000]
+].map(mk);
+const BANANA = [
+  ["pm","Piscok Milo","10 pcs","🍌",28000],
+  ["pmz","Piscok Mozzarella","10 pcs","🍌",30000],
+  ["nl","Nangka Lumer","10 pcs","🍈",27000],
+  ["dl","Durian Lumer","8 pcs","🍈",29000],
+  ["pk","Piscok Keju","10 pcs","🧀",27000],
+  ["pgw","Pisang Goreng Wijen","15 pcs","🍌",28000],
+  ["mo","Molen Original","10 pcs","🥐",30000],
+  ["mc","Molen Cokelat","10 pcs","🍫",32000]
+].map(mk);
+// Cookies (limited, PO). img = daftar nama file foto di repository (dicoba berurutan sampai ada yang berhasil)
+const COOKIES = [
+  {id:"kk-o",n:"Kue Kacang Original",p:35000,i:"🥜",meta:"Toples 600 ml",u:"toples",
+    img:["KacangOri.jpeg"]},
+  {id:"kk-i",n:"Kue Kacang Ijo",p:40000,i:"🍵",meta:"Toples 600 ml",u:"toples",
+    img:["KacangIjo.jpeg","Kacangljo.jpeg"]},
+  {id:"kk-p",n:"Kue Kacang Premium",p:45000,i:"🥜",meta:"Toples 1000 ml",u:"toples",
+    img:["KacangPremium.jpeg"]},
+  {id:"ksk",n:"Kue Sagu Keju",p:45000,i:"🧀",meta:"Toples 600 ml",u:"toples",
+    img:["SaguKeju.jpeg"]},
+  {id:"kk-cm",n:"Kue Kacang Coklat Mede",p:45000,i:"🍫",meta:"Toples 600 ml",u:"toples",
+    img:["KacangColatMede.jpeg","KacangCoklatMede.jpeg"]},
+  {id:"semprit",n:"Kue Semprit",p:47000,i:"🌼",meta:"500 gr",u:"pack",
+    img:["Semprit.jpeg"]},
+  {id:"lk",n:"Lidah Kucing Original",p:47000,i:"🍪",meta:"500 gr",u:"pack",
+    img:["LidangKucingOri.jpeg","LidahKucingOri.jpeg"]}
+];
+
+const rp=n=>"Rp"+n.toLocaleString("id-ID");
+const all=[...SAMBAL,...SAVORY,...BANANA,...COOKIES];
+const qty={},pete={};
+all.forEach(x=>qty[x.id]=0);
+
+// Pasang foto: coba nama file satu per satu; kalau semuanya gagal, emoji tetap tampil
+function setFoto(card,x){
+  if(!x.img||!x.img.length)return;
+  const im=document.createElement("img");
+  im.className="ph";im.alt=x.n;im.loading="lazy";im.decoding="async";
+  let k=0;
+  im.onload=()=>card.classList.add("has-ph");
+  im.onerror=()=>{k++;if(k<x.img.length){im.src=x.img[k];}else{im.remove();}};
+  im.src=x.img[0];
+  card.prepend(im);
+}
+
+function card(x){
+  const d=document.createElement("div");
+  d.className="item";d.id="c-"+x.id;
+  d.innerHTML=`<div class="top"><div class="ico" aria-hidden="true">${x.i}</div><div><h3>${x.n}</h3><div class="meta">${x.meta||"Netto 200 ml"}</div></div></div>
+  ${x.pete?`<label class="pete"><input type="checkbox" data-pete="${x.id}"> Tambah pete (harga sama)</label>`:""}
+  <div class="row"><span class="price">${rp(x.p)}<small class="meta"> / ${x.u||(x.pete?"botol":"pack")}</small></span>
+  <div class="step"><button type="button" data-d="-1" data-id="${x.id}" aria-label="Kurangi ${x.n}">−</button><output id="q-${x.id}">0</output><button type="button" data-d="1" data-id="${x.id}" aria-label="Tambah ${x.n}">+</button></div></div>`;
+  setFoto(d,x);
+  return d;
+}
+SAMBAL.forEach(x=>sambal.append(card(x)));
+SAVORY.forEach(x=>savory.append(card(x)));
+BANANA.forEach(x=>banana.append(card(x)));
+COOKIES.forEach(x=>cookies.append(card(x)));
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-d]");if(!b)return;
+  const id=b.dataset.id;qty[id]=Math.max(0,Math.min(99,qty[id]+ +b.dataset.d));update();
+});
+document.addEventListener("change",e=>{
+  if(e.target.dataset.pete){pete[e.target.dataset.pete]=e.target.checked;update();}
+});
+
+function lines(){
+  return all.filter(x=>qty[x.id]>0).map(x=>({x,q:qty[x.id],sub:qty[x.id]*x.p,pete:x.pete&&pete[x.id]}));
+}
+function totalNum(){return lines().reduce((a,l)=>a+l.sub,0);}
+function update(){
+  const L=lines();let c=0;
+  all.forEach(x=>{
+    document.getElementById("q-"+x.id).textContent=qty[x.id];
+    document.getElementById("c-"+x.id).classList.toggle("on",qty[x.id]>0);
+  });
+  L.forEach(l=>c+=l.q);
+  sum.innerHTML=L.length?L.map(l=>`<li><span>${l.q}× ${l.x.n}${l.pete?" (+pete)":""}</span><span>${rp(l.sub)}</span></li>`).join(""):'<li class="empty">Belum ada produk dipilih</li>';
+  total.textContent=total2.textContent=rp(totalNum());
+  cnt.textContent=c+" item";
+}
+function orderId(){
+  const d=new Date(),p=n=>String(n).padStart(2,"0");
+  return "KF-"+String(d.getFullYear()).slice(2)+p(d.getMonth()+1)+p(d.getDate())+"-"+Math.random().toString(36).slice(2,6).toUpperCase();
+}
+function build(){
+  const L=lines(),g=id=>document.getElementById(id).value.trim();
+  if(!L.length)return {e:"Pilih minimal satu produk dulu ya."};
+  if(!g("nama"))return {e:"Isi nama lengkap."};
+  if(g("hp").replace(/\D/g,"").length<9)return {e:"Isi nomor WhatsApp yang benar."};
+  return {d:{
+    id:orderId(),nama:g("nama"),hp:g("hp"),metode:metode.value,
+    alamat:g("alamat"),catatan:g("catatan"),website:g("website"),total:totalNum(),
+    items:L.map(l=>`${l.q}x ${l.x.n}${l.pete?" (tambah pete)":""} = ${rp(l.sub)}`).join("\n")
+  }};
+}
+function resetAll(){
+  all.forEach(x=>{qty[x.id]=0;pete[x.id]=false;});
+  document.querySelectorAll("[data-pete]").forEach(c=>c.checked=false);
+  ["nama","hp","alamat","catatan","website"].forEach(i=>document.getElementById(i).value="");
+  metode.selectedIndex=0;err.textContent="";update();
+}
+function closeThx(){thx.classList.remove("show");}
+
+send.onclick=async()=>{
+  const r=build();err.textContent=r.e||"";if(r.e)return;
+  if(SCRIPT_URL.includes("GANTI")){err.textContent="SCRIPT_URL belum diisi di file index.html.";return;}
+  send.disabled=true;send.textContent="Mengirim...";
+  try{
+    await fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(r.d)});
+    thxId.textContent=r.d.id;thxNama.textContent=r.d.nama;thxTotal.textContent=rp(r.d.total);
+    thx.classList.add("show");redo.focus();
+  }catch(_){
+    err.textContent="Pesanan belum terkirim. Periksa koneksi internet, lalu tekan Kirim Pesanan lagi.";
+  }finally{
+    send.disabled=false;send.textContent="Kirim Pesanan";
+  }
+};
+redo.onclick=()=>{closeThx();resetAll();window.scrollTo({top:0,behavior:"smooth"});};
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeThx();});
+jump.onclick=()=>sum.scrollIntoView({behavior:"smooth",block:"center"});
+update();
+</script>
+</body>
+</html>
